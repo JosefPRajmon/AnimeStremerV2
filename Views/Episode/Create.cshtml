@@ -1,0 +1,52 @@
+﻿@using AnimeStreamerV2.Models;
+@model AnimeEpisodeModel
+@{
+    ViewData["Title"] = "Create New Anime";
+}
+
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="anime-card p-4">
+            <form asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="@Model.AnimeId" value="@Model.AnimeId" />
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group mb-3">
+                    <label asp-for="Name" class="control-label">Name</label>
+                    <input asp-for="Name" name="Name" id="Name" class="form-control" />
+                    <p>Auto create name </p><input type="checkbox" id="checkName" asp-for="NameAutoCreate" onclick="checkChange(this)" />
+                    <script>
+                        function checkChange(checkbox) {
+                            var sendToServer = document.getElementById('nameAutoCreateString');
+                            sendToServer.value = checkbox.checked;
+                            document.getElementById('Name').value = "Automatic";
+                        }
+                    </script>
+                    <input name="nameAutoCreateString" id="nameAutoCreateString" type="hidden" value="false" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <label class="control-label">Sesion</label>
+                    <input type="number" asp-for="Season" name="Season" min="1" class="form-control" value="@ViewData["predictSeason"]" />
+                    <span asp-validation-for="Season" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <label class="control-label">Episode Number</label>
+                    <input type="number" asp-for="EpisodeNumber" name="EpisodeNumber" class="form-control" value="@ViewData["predictEpisode"]"/>
+                    <span asp-validation-for="EpisodeNumber" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-anime" />
+                    <a href="@Url.Action("Details", "Anime",new {id = @Model})" class="btn btn-secondary">Back to Anime</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

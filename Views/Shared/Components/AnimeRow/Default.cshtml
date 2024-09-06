@@ -1,0 +1,14 @@
+﻿@model IEnumerable<AnimeStreamerV2.Models.AnimeModel>
+<div class="anime-component">
+    <h2>@ViewData["RowName"]</h2>
+    <div class="anime-scroll-container">
+        @foreach (var item in Model)
+        {
+            <div class="anime-item">
+                <a href="@Url.Action("Details", "Anime", new { id = item.Id })">
+                    <img src="@item.IconPath" alt="Anime Icon" class="rounded-image" />
+                </a>
+            </div>
+        }
+    </div>
+</div>

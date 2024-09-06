@@ -1,0 +1,126 @@
+﻿.video-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.subtitle-menu {
+    position: absolute;
+    bottom: 60px;
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 5px;
+    padding: 10px;
+    z-index: 1002;
+}
+
+.subtitle-button {
+    display: block;
+    width: 100%;
+    padding: 5px 10px;
+    margin-bottom: 5px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    text-align: left;
+    cursor: pointer;
+}
+
+    .subtitle-button:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+    }
+.video-container {
+    position: relative;
+    width: 80%; /* nebo jiná velikost podle potřeby */
+    height: 80vh; /* nebo jiná velikost podle potřeby */
+    margin: auto;
+}
+.close-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border: none;
+    color: black;
+    font-size: 24px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+    .close-button:hover {
+        background-color: rgba(255, 255, 255, 0.9);
+    }
+#player {
+    width: 100%;
+    height: 100%;
+}
+
+.custom-controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    transition: opacity 0.3s;
+}
+
+.controls-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.control-button {
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 5px;
+    margin: 0 5px;
+}
+
+    .control-button svg {
+        width: 24px;
+        height: 24px;
+        fill: currentColor;
+    }
+
+#volume-control {
+    width: 100px;
+    display: none;
+}
+
+#timeline {
+    width: 100%;
+    height: 5px;
+    background: rgba(255,255,255,0.3);
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+#timeline-progress {
+    height: 100%;
+    background: white;
+    width: 0%;
+}
+/* Skryjeme původní ovládací prvky videa */
+#player::-webkit-media-controls {
+    display: none !important;
+}
+
+#player::-webkit-media-controls-enclosure {
+    display: none !important;
+}

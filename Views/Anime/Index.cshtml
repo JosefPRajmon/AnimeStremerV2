@@ -1,0 +1,37 @@
+﻿@model IEnumerable<AnimeStreamerV2.Models.AnimeModel>
+
+@{
+    ViewData["Title"] = "Anime List";
+}
+@section LinkCss {
+    @await Html.PartialAsync("Components/AnimeRow/LinkCss")
+}
+<!--<h1 class="text-center mb-4 anime-title">Anime Collection</h1>
+
+<p>
+    <a href="@Url.Action("Create", "Anime")" class="btn btn-anime mb-3">Add New Anime</a>
+</p>-->
+@await Component.InvokeAsync("AnimeRow",new{
+        AnimeList =  Model,
+        RowName="Test"
+})
+@await Component.InvokeAsync("AnimeRow",new{
+        AnimeList =  Model,
+        RowName="Test"
+})
+@await Component.InvokeAsync("AnimeRow",new{
+        AnimeList =  Model,
+        RowName="Test"
+})
+@await Component.InvokeAsync("AnimeRow",new{
+        AnimeList =  Model,
+        RowName="Test"
+})
+@await Component.InvokeAsync("AnimeRow",new{
+        AnimeList =  Model,
+        RowName="Test"
+})
+@await Component.InvokeAsync("AnimeRow",new{
+        AnimeList =  Model,
+        RowName="Test"
+})

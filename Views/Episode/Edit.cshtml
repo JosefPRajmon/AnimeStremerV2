@@ -1,0 +1,179 @@
+﻿@using AnimeStreamerV2.Models
+@model AnimeEpisodeModel
+@{
+    ViewData["Title"] = "Create New Anime";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="anime-card p-4">
+            @if (User.IsInRole("Admin")||User.IsInRole("ContentCreator"))
+            {
+                <form asp-action="Edit" method="post">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input asp-for="@Model.Id" type="hidden" value="@Model.Id" />
+                    <input asp-for="@Model.AnimeId" type="hidden" value="@Model.AnimeId" />
+                    <div class="form-group mb-3">
+                        <label asp-for="@Model.Name" class="control-label">Name</label>
+                        <input asp-for="@Model.Name" class="form-control" />
+
+                        <p>Auto create name <input type="checkbox" id="checkName" checked="@Model.NameAutoCreate" onclick="checkChange(this)" /></p>
+                        <script>
+                            function checkChange(checkbox) {
+                                var sendToServer = document.getElementById('nameAutoCreateString');
+                                sendToServer.value = checkbox.checked;
+                            }
+                        </script>
+                        <input name="nameAutoCreateString" id="nameAutoCreateString" type="hidden" value="false" />
+                        <span asp-validation-for="@Model.Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="control-label">Sesion</label>
+                        <input type="number" asp-for="@Model.Season" class="form-control" />
+                        <span asp-validation-for="@Model.Season" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="control-label">Episode Number</label>
+                        <input type="number" asp-for="@Model.EpisodeNumber" name="EpisodeNumber" class="form-control" />
+                        <span asp-validation-for="@Model.EpisodeNumber" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Save" class="btn btn-anime" />
+                        <a href="@Url.Action("Details", "Anime",new {id = @Model.AnimeId})" class="btn btn-secondary">Back to Anime</a>
+                    </div>
+                </form>                
+                <input type="file" id="videoFile" name="video" />
+                <input type="hidden" id="episodeId" value="@Model.Id" />
+                <button id="uploadVideoButton">Upload Video</button>
+                <br/>
+            }
+            @if (User.IsInRole("SubtitleCreator")||User.IsInRole("Admin")){
+                <table>
+                    @foreach (var Subtitle in Model.Subtitles)
+                    {
+                        <tr><td><label>@Subtitle.Path.Split("\\").Last()</label></td><td><input style="width:30px" id="version@(Subtitle.Id)" type="text" value="@Subtitle.Version" /></td><td><button onclick="uploadFiles(`subtitle`,@Subtitle.Id)">Update</button></td></tr>
+                    }
+                </table>
+
+                <input type="file" id="subtitleFile" accept=".srt,.vtt,.ass">
+                <button id="uploadSubtitleButton">Upload Subtitle</button>
+            }
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="~/js/subtitles-octopus.js"></script>
+    <script>
+        async function uploadFiles(fileType, subId = null) {
+            try {
+                const fileInput = document.getElementById(fileType === 'video' ? 'videoFile' : 'subtitleFile');
+                const files = fileInput.files;
+                if (files.length === 0) {
+                    throw new Error('Nebyl vybrán žádný soubor');
+                }
+                const file = files[0];
+                const chunkSize = 5 * 1024 * 1024; // 5MB chunk size
+                const chunks = Math.ceil(file.size / chunkSize);
+                const episodeId = @Model.Id;
+               // const csrfToken = document.cookie.split('; ').find(row => row.startsWith('XSRF-TOKEN=')).split('=')[1];
+                const selectedLanguage = "cs-cz"; // Toto by mělo být dynamicky nastaveno, pokud se mění
+                const token = document.getElementsByName("__RequestVerificationToken")[0].value;
+                for (let i = 0; i < chunks; i++) {
+                    const start = i * chunkSize;
+                    const end = Math.min(start + chunkSize, file.size);
+                    const chunk = file.slice(start, end);
+                    const formData = new FormData();
+                    formData.append('chunk', chunk, file.name);
+                    formData.append('chunkIndex', i.toString());
+                    formData.append('totalChunks', chunks.toString());
+                    formData.append('id', episodeId);
+                    formData.append('fileType', fileType);
+
+                    if (fileType === 'subtitle') {
+                        formData.append('language', selectedLanguage);
+                    }
+
+                    console.log(`Odesílám ${fileType} chunk ${i + 1}/${chunks}`, {
+                        fileName: file.name,
+                        chunkIndex: i,
+                        totalChunks: chunks,
+                        id: episodeId,
+                        chunkSize: chunk.size,
+                        fileType: fileType,
+                        language: fileType === 'subtitle' ? selectedLanguage : undefined
+                    });
+
+                    const response = await fetch('/Episode/AddEditFile', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error(`Chyba při nahrávání ${fileType} chunku ${i + 1}:`, errorText);
+                        throw new Error(`HTTP error! status: ${response.status}, details: ${errorText}`);
+                    }
+
+                    const result = await response.json();
+                    console.log(`${fileType.charAt(0).toUpperCase() + fileType.slice(1)} chunk ${i + 1}/${chunks} nahráno:`, result);
+                }
+
+                const mergeResponse = await fetch('/Episode/MergeFileChunks', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        '__RequestVerificationToken': token
+                    },
+                    body: JSON.stringify({
+                        fileName: file.name,
+                        episodeId: episodeId,
+                        totalChunks: chunks,
+                        fileType: fileType,
+                        language: fileType === 'subtitle' ? selectedLanguage : null,
+                        SubId: `${subId}`,
+                        Version: document.getElementById(`version${subId}`).value
+                    })
+                });
+
+                if (!mergeResponse.ok) {
+                    const mergeErrorText = await mergeResponse.text();
+                    console.error(`Chyba při spojování ${fileType} chunků:`, mergeErrorText);
+                    throw new Error(`Chyba při spojování ${fileType} chunků! status: ${mergeResponse.status}`);
+                }
+
+                const mergeResult = await mergeResponse.json();
+                //console.log(`${fileType.charAt(0).toUpperCase() + fileType.slice(1)} nahrávání dokončeno a chunky spojeny:`, mergeResult);
+                alert(`${fileType.charAt(0).toUpperCase() + fileType.slice(1)} bylo úspěšně nahráno a zpracováno.`);
+                location.reload(true);
+            } catch (error) {
+                console.error(`Chyba při nahrávání ${fileType}:`, error);
+                alert(`Došlo k chybě při nahrávání ${fileType}: ${error.message}`);
+            }
+        }
+        try {
+            document.getElementById('uploadVideoButton').addEventListener('click', function (e) {
+                e.preventDefault();
+                uploadFiles('video');
+            });
+        }
+        catch (r) {
+
+        }
+        try {
+            document.getElementById('uploadSubtitleButton').addEventListener('click', function (e) {
+                e.preventDefault();
+                uploadFiles('subtitle');
+            });
+        }
+        catch (a) {
+
+        }
+    </script>
+}

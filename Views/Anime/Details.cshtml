@@ -1,0 +1,65 @@
+﻿
+@model AnimeStreamerV2.Models.AnimeModel
+
+@{
+    ViewData["Title"] = "Anime Details";
+}
+
+@section LinkCss {
+    @await Html.PartialAsync("Components/VideoPlayer/LinkCss")
+}
+
+<h1>Anime Details</h1>
+@await Component.InvokeAsync("VideoPlayer")
+<div>
+    <h4>@Model.Name</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">Description</dt>
+        <dd class="col-sm-10">@Model.Description</dd>
+    </dl>
+</div>
+@using Microsoft.AspNetCore.Identity
+@using test.Models.AdminSystem
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    var user = await UserManager.GetUserAsync(User);
+    var userId = user?.Id;
+}
+
+<h2>Episodes</h2> <a href="@Url.Action("Create", "Episode", new { id = Model.Id })" class="btn btn-warning btn-sm">Add episode</a>
+@if (Model.Episodes.Count !=0){
+@for (int i = 1; i <= Model.Episodes.MaxBy(episode=>episode.Season).Season; i++)
+{
+    <h2>season @i </h2>
+    @foreach (var episode in Model.Episodes.Where(abs => abs.Season==i))
+    {
+        <div>
+            @if (userId!=null)
+                {
+                    <button onclick="loadVideo(@episode.Id )">@episode.Name</button>
+
+                    @if (User.IsInRole("SubtitleCreator")||User.IsInRole("Admin")||User.IsInRole("ContentCreator"))
+                    {
+                        <a href="@Url.Action("Edit", "Episode", new { id = episode.Id })">Edit</a>
+                    }
+
+                }
+                else
+                {
+
+                    <button onclick="window.location.href='/Identity/Account/Login?ReturnUrl=%2FAnime%2FDetails%2F@(Model.Id)'">@episode.Name</button>
+
+                }
+
+        </div>
+    }}
+}<div>
+    <a href="@Url.Action("Edit", "Anime", new { id = Model.Id })" class="btn btn-warning">Edit</a>
+    <a href="@Url.Action("Index", "Anime")" class="btn btn-secondary">Back to List</a>
+</div>
+@section Scripts {
+    @await Html.PartialAsync("Components/VideoPlayer/JsScripts")
+
+}

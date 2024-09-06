@@ -1,0 +1,60 @@
+﻿@using AnimeStreamerV2.Models;
+@model AnimeStreamerV2.Models.AnimeModel
+
+@{
+    ViewData["Title"] = "Create New Anime";
+}
+<a class="nav-link text-dark" asp-area="" asp-controller="Anime" asp-action="Index">Home</a>
+<h1 class="text-center mb-4 anime-title">Create New Anime</h1>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="anime-card p-4">
+            <form asp-action="Create" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group mb-3">
+                    <label class="control-label">Name</label>
+                    <input asp-for="@Model.Name" class="form-control" />
+
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <label  class="control-label">Description</label>
+                    <textarea asp-for="@Model.Description" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="@Model.Description" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <input  type="file" name="AnimeIcon" />
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-anime" />
+                    <a href="@Url.Action("Index", "Anime")" class="btn btn-secondary">Back to List</a>
+                </div>
+                @if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (var modelState in ViewData.ModelState)
+            {
+                foreach (var error in modelState.Value.Errors)
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            }
+        </ul>
+    </div>
+}
+                <div asp-validation-summary="All" class="text-danger"></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    }
+}

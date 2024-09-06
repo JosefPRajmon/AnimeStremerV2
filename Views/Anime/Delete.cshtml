@@ -1,0 +1,27 @@
+﻿@model AnimeStreamerV2.Models.AnimeModel
+
+@using AnimeStreamerV2.Models
+@{
+    ViewData["Title"] = "Delete Anime";
+    Layout = "_Layout";
+}
+@Model AnimeModel
+
+<h1>Delete Anime</h1>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>@Model.Name</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">Description</dt>
+        <dd class="col-sm-10">@Model.Description</dd>
+    </dl>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="Id" value="@Model.Id" name="id" />
+        <input type="hidden" value="true" name="remove"/>
+        <input type="submit" value="Delete" asp-action="DeleteConfirmed" class="btn btn-danger" /> |
+        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    </form>
+</div>
