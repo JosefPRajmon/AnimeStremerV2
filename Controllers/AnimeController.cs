@@ -83,7 +83,7 @@ namespace AnimeStreamerV2.Controllers
             anime.IconPath = Path.Combine("anime", $"{anime.Id}", AnimeIcon.FileName);
         }
 
-        [Authorize(Roles = "Admin,SubtitleCreator,ContentCreator")]
+        [Authorize(Roles = "Admin,ContentCreator")]
         public async Task<IActionResult> Edit(int id)
         {
             var anime = await _context.Animes.FindAsync(id);
@@ -93,11 +93,11 @@ namespace AnimeStreamerV2.Controllers
             }
             return View(anime);
         }
-        [Authorize]
+        //[Authorize]
         [HttpPost]
         //[ValidateAntiForgeryToken]
-        //[Authorize(Roles = "Admin,SubtitleCreator,ContentCreator")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description")] AnimeModel anime, IFormFile? AnimeIcon)
+        [Authorize(Roles = "Admin,ContentCreator")]
+        public async Task<IActionResult> Edit(int id, /*[Bind("Id,Name,Description")]*/ AnimeModel anime, IFormFile? AnimeIcon)
         {
             if (id != anime.Id)
             {
@@ -107,6 +107,7 @@ namespace AnimeStreamerV2.Controllers
             {
                 await AddIcon(anime, AnimeIcon);
             }
+            
             if (ModelState.IsValid)
             {
                 try
