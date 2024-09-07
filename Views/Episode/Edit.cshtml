@@ -138,7 +138,7 @@
                         fileType: fileType,
                         language: fileType === 'subtitle' ? selectedLanguage : null,
                         SubId: `${subId}`,
-                        Version: document.getElementById(`version${subId}`).value
+                        Version:subId==null?null: document.getElementById(`version${subId}`).value
                     })
                 });
 

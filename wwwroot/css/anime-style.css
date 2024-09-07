@@ -57,3 +57,116 @@
         background-color: #ffd7e6;
         color: #8a2be2;
     }
+
+    body.anime-bg {
+    background-color: #f0e6f6;
+    font-family: 'Roboto', sans-serif;
+}
+
+.anime-details-container {
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.trailer-section {
+    margin-bottom: 20px;
+}
+
+.anime-title {
+    color: #8a2be2;
+    font-weight: bold;
+    font-size: 2rem;
+    margin-bottom: 15px;
+}
+
+.anime-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 20px;
+}
+
+.anime-description {
+    flex: 1;
+    margin-right: 20px;
+}
+
+.anime-rating svg {
+    width: 40px;
+    height: 40px;
+}
+
+.episodes-section h2 {
+    color: #8a2be2;
+    margin-bottom: 15px;
+}
+
+.episode-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.episode-item {
+    background-color: #ffd7e6;
+    border-radius: 10px;
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.episode-item:hover {
+    background-color: #ffb4da;
+}
+
+.episode-name {
+    font-weight: bold;
+    color: #8a2be2;
+    text-align:center;
+    margin:0;
+}
+
+.episode-number {
+    color: #666;
+    margin-left: 5px;
+}
+
+.btn-anime {
+    background-color: #ff69b4;
+    border-color: #ff69b4;
+    color: white;
+}
+
+.btn-anime:hover {
+    background-color: #ff1493;
+    border-color: #ff1493;
+    color: white;
+}
+
+.video-players-container {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* 16:9 Aspect Ratio */
+    margin-bottom: 20px;
+}
+
+.video-player {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.overlay-player {
+    z-index: 10;
+}
+
+#trailerVideo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}

@@ -18,6 +18,7 @@ namespace AnimeStreamerV2.Models
         public string Description { get; set; }
         public AgeRating Rating { get; set; } = AgeRating.GeneralAudiences;
         public string? IconPath { get; set; }
+        public string? CountryOfOrigin { get; set; }
 
         //episodes
         public List<AnimeEpisodeModel> Episodes { get; set; } = new List<AnimeEpisodeModel>();
