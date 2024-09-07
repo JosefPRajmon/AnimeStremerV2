@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Anime List";
+    var allContris =@Model.Select(anime=>anime.CountryOfOrigin).Distinct();
 }
 @section LinkCss {
     @await Html.PartialAsync("Components/AnimeRow/LinkCss")
@@ -11,27 +12,11 @@
 <p>
     <a href="@Url.Action("Create", "Anime")" class="btn btn-anime mb-3">Add New Anime</a>
 </p>-->
-@await Component.InvokeAsync("AnimeRow",new{
-        AnimeList =  Model,
-        RowName="Test"
+@foreach (var item in allContris)
+{
+    @await Component.InvokeAsync("AnimeRow",new{
+        AnimeList =  Model.Where(anime=>anime.CountryOfOrigin== item.ToString()).ToList(),
+        RowName=item.ToString()
 })
-@await Component.InvokeAsync("AnimeRow",new{
-        AnimeList =  Model,
-        RowName="Test"
-})
-@await Component.InvokeAsync("AnimeRow",new{
-        AnimeList =  Model,
-        RowName="Test"
-})
-@await Component.InvokeAsync("AnimeRow",new{
-        AnimeList =  Model,
-        RowName="Test"
-})
-@await Component.InvokeAsync("AnimeRow",new{
-        AnimeList =  Model,
-        RowName="Test"
-})
-@await Component.InvokeAsync("AnimeRow",new{
-        AnimeList =  Model,
-        RowName="Test"
-})
+}
+
