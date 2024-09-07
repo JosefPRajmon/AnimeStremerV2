@@ -40,7 +40,7 @@ namespace AnimeStreamerV2.Controllers
             {
                 return NotFound();
             }
-
+            ViewData["baseUrl"]= $"{Request.Scheme}://{Request.Host}/"/*+{ Request.Host.Port ?? 80}*/;
             return View(anime);
         }
         [Authorize(Roles = "Admin,ContentCreator")]
@@ -107,7 +107,7 @@ namespace AnimeStreamerV2.Controllers
             {
                 await AddIcon(anime, AnimeIcon);
             }
-            
+
             if (ModelState.IsValid)
             {
                 try

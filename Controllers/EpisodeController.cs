@@ -55,7 +55,10 @@ namespace AnimeStreamerV2.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([Bind("AnimeId,Name,EpisodeNumber,Season")] AnimeEpisodeModel episode, string nameAutoCreateString)
         {
-
+            if (episode.Name.ToLower().Contains("trayler"))
+            {
+                episode.Trailer=true;
+            }
             if (episode.NameAutoCreate = bool.Parse(nameAutoCreateString))
             {
                 AnimeModel animeEpisode = await _context.Animes.Where(a => a.Id==episode.AnimeId).FirstOrDefaultAsync();
@@ -160,7 +163,6 @@ namespace AnimeStreamerV2.Controllers
         }
 
         [HttpPost]
-        // [ValidateAntiForgeryToken]
         public async Task<IActionResult> MergeFileChunks([FromBody] MergeRequest request)
         {
 

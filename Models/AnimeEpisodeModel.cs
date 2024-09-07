@@ -16,6 +16,8 @@ namespace AnimeStreamerV2.Models
         public string? Description { get; set; }
 
         //pozicion
+        public bool Trailer { get; set; } = false;
+        public string? EpisodaIcon { get; set; }
 
         [Required(ErrorMessage = "The Season field is required.")]
         public int Season { get; set; }

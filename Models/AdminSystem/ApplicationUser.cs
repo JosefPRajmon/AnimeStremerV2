@@ -8,5 +8,6 @@ namespace test.Models.AdminSystem
         public bool IsContentCreator { get; set; }
         public int? SubscriptionId { get; set; }
         public virtual Subscription Subscription { get; set; }
+        public string Country { get; set; }
     }
 }
