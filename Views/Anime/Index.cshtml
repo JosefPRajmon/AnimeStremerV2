@@ -3,6 +3,7 @@
 
 @{
     ViewData["Title"] = "Anime List";
+    var allContris =@Model.Select(anime=>anime.CountryOfOrigin).Distinct();
 }
 @section LinkCss {
     @await Html.PartialAsync("Components/AnimeRow/LinkCss")
