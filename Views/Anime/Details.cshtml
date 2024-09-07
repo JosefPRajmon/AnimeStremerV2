@@ -1,65 +1,112 @@
-﻿
-@model AnimeStreamerV2.Models.AnimeModel
+﻿@model AnimeStreamerV2.Models.AnimeModel
 
 @{
     ViewData["Title"] = "Anime Details";
+    IEnumerable<AnimeEpisodeModel> trayler = Model.Episodes.Where(a => a.Trailer == true);
 }
 
 @section LinkCss {
     @await Html.PartialAsync("Components/VideoPlayer/LinkCss")
 }
 
-<h1>Anime Details</h1>
-@await Component.InvokeAsync("VideoPlayer")
-<div>
-    <h4>@Model.Name</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">Description</dt>
-        <dd class="col-sm-10">@Model.Description</dd>
-    </dl>
-</div>
-@using Microsoft.AspNetCore.Identity
-@using test.Models.AdminSystem
-@inject UserManager<ApplicationUser> UserManager
-
-@{
-    var user = await UserManager.GetUserAsync(User);
-    var userId = user?.Id;
-}
-
-<h2>Episodes</h2> <a href="@Url.Action("Create", "Episode", new { id = Model.Id })" class="btn btn-warning btn-sm">Add episode</a>
-@if (Model.Episodes.Count !=0){
-@for (int i = 1; i <= Model.Episodes.MaxBy(episode=>episode.Season).Season; i++)
-{
-    <h2>season @i </h2>
-    @foreach (var episode in Model.Episodes.Where(abs => abs.Season==i))
-    {
-        <div>
-            @if (userId!=null)
-                {
-                    <button onclick="loadVideo(@episode.Id )">@episode.Name</button>
-
-                    @if (User.IsInRole("SubtitleCreator")||User.IsInRole("Admin")||User.IsInRole("ContentCreator"))
-                    {
-                        <a href="@Url.Action("Edit", "Episode", new { id = episode.Id })">Edit</a>
-                    }
-
-                }
-                else
-                {
-
-                    <button onclick="window.location.href='/Identity/Account/Login?ReturnUrl=%2FAnime%2FDetails%2F@(Model.Id)'">@episode.Name</button>
-
-                }
-
+<div class="anime-details-container">
+    <div class="video-players-container">
+        <div id="episodePlayer" class="video-player">
+            @await Component.InvokeAsync("VideoPlayer")
         </div>
-    }}
-}<div>
+        <div id="trailerPlayer" class="video-player overlay-player">
+           @if (trayler.Count()>0)
+            {
+                <video autoplay src="@(ViewData["baseUrl"])video?id=@(trayler.First().Id)" id="trailerVideo" />
+            }
+            else
+            {
+                <img src="@(ViewData["baseUrl"])@(Model.IconPath)" style="height:100%;display: block; margin-left: auto; margin-right: auto;" alt="Anime Icon" />
+
+                <br />
+            }
+        </div>
+    </div>
+
+    <h1 class="anime-title">@Model.Name</h1>
+
+    <div class="anime-info">
+        <div class="anime-description">@Model.Description</div>
+        <div class="anime-rating">
+            @switch (Model.Rating)
+            {
+                case AgeRating.GeneralAudiences:
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" />
+                        <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="currentColor">G</text>
+                    </svg>
+                    break;
+                case AgeRating.ParentalGuidanceSuggested:
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" />
+                        <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="currentColor">PG</text>
+                    </svg>
+                    break;
+                    // Přidejte další případy pro ostatní hodnocení
+            }
+        </div>
+    </div>
+
+    <div class="episodes-section">
+        <h2>Episodes</h2>
+        @if (Model.Episodes.Count>0)
+        {
+            @for (int i = 1; i <= Model.Episodes.MaxBy(episode => episode.Season).Season; i++)
+            {
+                <h3>Season @i</h3>
+                <div class="episode-list">
+                    @foreach (var episode in Model.Episodes.Where(e => e.Season == i & e.Trailer==false))
+                    {
+                        <div class="episode-item" onclick="loadVideo(@episode.Id)">
+                            <img src="@(ViewData["baseUrl"])@episode.EpisodaIcon" style="height:30vh;display: block; margin-left: auto; margin-right: auto;" alt="Anime Icon" /><br />
+                            <p class="episode-name">@episode.Name  (@episode.Season : @episode.EpisodeNumber)</p>
+                        </div>
+                    }
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<div>
     <a href="@Url.Action("Edit", "Anime", new { id = Model.Id })" class="btn btn-warning">Edit</a>
     <a href="@Url.Action("Index", "Anime")" class="btn btn-secondary">Back to List</a>
 </div>
+
 @section Scripts {
     @await Html.PartialAsync("Components/VideoPlayer/JsScripts")
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const trailerVideo = document.getElementById('trailerVideo');
+            const videoContainer = document.querySelector('.video-players-container');
+            let isVideoVisible = true;
 
+            function handleVideoVisibility() {
+                const containerRect = videoContainer.getBoundingClientRect();
+                const windowHeight = window.innerHeight;
+
+                // Video je považováno za viditelné, pokud je alespoň 50% jeho výšky v viewport
+                const isVisible = containerRect.top < windowHeight / 2 && containerRect.bottom >= windowHeight / 2;
+
+                if (isVisible && !isVideoVisible) {
+                    trailerVideo.play();
+                    isVideoVisible = true;
+                } else if (!isVisible && isVideoVisible) {
+                    trailerVideo.pause();
+                    isVideoVisible = false;
+                }
+            }
+
+            // Sledování scrollování
+            window.addEventListener('scroll', handleVideoVisibility);
+
+            // Iniciální kontrola při načtení stránky
+            handleVideoVisibility();
+        });
+    </script>
 }
