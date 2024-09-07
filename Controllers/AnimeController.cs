@@ -1,8 +1,10 @@
 ﻿using AnimeStreamerV2.DbContextFile;
 using AnimeStreamerV2.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using test.Models.AdminSystem;
 
 namespace AnimeStreamerV2.Controllers
 {
@@ -10,11 +12,13 @@ namespace AnimeStreamerV2.Controllers
     {
         private readonly AnimeDbContext _context;
         private readonly IWebHostEnvironment _environment;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public AnimeController(AnimeDbContext context, IWebHostEnvironment environment)
+        public AnimeController(AnimeDbContext context, IWebHostEnvironment environment, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _environment=environment;
+            _userManager = userManager;
         }
 
         public async Task<IActionResult> Index()
@@ -54,6 +58,7 @@ namespace AnimeStreamerV2.Controllers
         [Authorize(Roles = "Admin,ContentCreator")]
         public async Task<IActionResult> Create([Bind("Name,Description")] AnimeModel anime, IFormFile AnimeIcon)
         {
+            anime.CountryOfOrigin= (await _userManager.GetUserAsync(User)).Country;
             if (ModelState.IsValid)
             {
 
