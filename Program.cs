@@ -5,12 +5,7 @@ using test.Models.AdminSystem;
 using test.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-// Konfigurace datab�ze
-/*builder.Services.AddDbContext<AnimeDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));*/
 
-
-/**/
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<AnimeDbContext>(options =>

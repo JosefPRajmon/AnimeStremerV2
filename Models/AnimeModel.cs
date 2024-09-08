@@ -8,6 +8,7 @@ namespace AnimeStreamerV2.Models
     {
         //identification
         public int Id { get; set; }
+        public string? CreaterId { get; set; }
 
         //information
 
