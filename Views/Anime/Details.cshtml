@@ -1,9 +1,13 @@
 ﻿@model AnimeStreamerV2.Models.AnimeModel
+@using Microsoft.AspNetCore.Identity
+@using test.Models.AdminSystem
+@inject UserManager<ApplicationUser> UserManager
 
 @{
+    var user = await UserManager.GetUserAsync(User);
     ViewData["Title"] = "Anime Details";
     IEnumerable<AnimeEpisodeModel> trayler = Model.Episodes.Where(a => a.Trailer == true);
-}
+        }
 
 @section LinkCss {
     @await Html.PartialAsync("Components/VideoPlayer/LinkCss")
@@ -62,10 +66,21 @@
                 <div class="episode-list">
                     @foreach (var episode in Model.Episodes.Where(e => e.Season == i & e.Trailer==false))
                     {
-                        <div class="episode-item" onclick="loadVideo(@episode.Id)">
-                            <img src="@(ViewData["baseUrl"])@episode.EpisodaIcon" style="height:30vh;display: block; margin-left: auto; margin-right: auto;" alt="Anime Icon" /><br />
-                            <p class="episode-name">@episode.Name  (@episode.Season : @episode.EpisodeNumber)</p>
-                        </div>
+                        if (user!=null)
+                        {
+                            <div class="episode-item" onclick="loadVideo(@episode.Id)">
+                                <img src="@(ViewData["baseUrl"])@episode.EpisodaIcon" style="height:30vh;display: block; margin-left: auto; margin-right: auto;" alt="Anime Icon" /><br />
+                                <p class="episode-name">@episode.Name  (@episode.Season : @episode.EpisodeNumber)</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="episode-item" onclick="window.location.href = `@(ViewData["baseUrl"])Identity/Account/Login?ReturnUrl=%2FAnime%2FDetails%2F@(Model.Id)`">
+                                <img src="@(ViewData["baseUrl"])@episode.EpisodaIcon" style="height:30vh;display: block; margin-left: auto; margin-right: auto;" alt="Anime Icon" /><br />
+                                <p class="episode-name">@episode.Name  (@episode.Season : @episode.EpisodeNumber)</p>
+                            </div>
+                        }
+
                     }
                 </div>
             }

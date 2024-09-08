@@ -23,7 +23,21 @@ namespace AnimeStreamerV2.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var animes = await _context.Animes.ToListAsync();
+            ViewData["baseUrl"]= $"{Request.Scheme}://{Request.Host}/"/*+{ Request.Host.Port ?? 80}*/;
+            ViewData["fun"]=$"{Request.Query["fun"]}";
+
+
+            string id = Request.RouteValues["id"]!=null ? Request.RouteValues["id"].ToString() : null;
+
+            List<AnimeModel> animes;
+            if (id!=null)
+            {
+                animes= await _context.Animes.Where(anime => anime.CreaterId == id).ToListAsync();
+            }
+            else
+            {
+                animes=await _context.Animes.ToListAsync();
+            }
             return View(animes);
         }
 
@@ -59,6 +73,7 @@ namespace AnimeStreamerV2.Controllers
         public async Task<IActionResult> Create([Bind("Name,Description")] AnimeModel anime, IFormFile AnimeIcon)
         {
             anime.CountryOfOrigin= (await _userManager.GetUserAsync(User)).Country;
+            anime.CreaterId = (await _userManager.GetUserAsync(User)).Id;
             if (ModelState.IsValid)
             {
 
