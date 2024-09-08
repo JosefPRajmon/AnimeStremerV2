@@ -18,7 +18,7 @@
 .rounded-image {
     border-radius: 10px; /* zakulacené rohy */
     max-width: 100px; /* nebo jiná vhodná velikost */
-    height: auto;
+    height: 100%;
 }
 
 /* Skrytí scrollbaru pro WebKit prohlížeče */

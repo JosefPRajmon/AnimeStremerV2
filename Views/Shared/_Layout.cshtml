@@ -10,6 +10,7 @@
     @await RenderSectionAsync("LinkCss", required: false)
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/anime-style.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/ParticipalLayout.css" asp-append-version="true" />
     <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body class="anime-bg">
@@ -24,11 +25,18 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Anime" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark" asp-area="" asp-route-fun="ByCountry" asp-controller="Anime" asp-action="Index">Contry</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Anime" asp-action="Create">Add New Anime</a>
+                            <a class="dropdown-item" asp-area="" asp-route-fun="ByCategory" asp-controller="Anime" asp-action="Index">Kategory</a>
+                        </li>                        
+                        <li class="nav-item">
+                            <a class="dropdown-item" asp-area="" asp-route-fun="ByRerease" asp-controller="Anime" asp-action="Index">Rerease</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="dropdown-item" asp-area="" asp-route-fun="ByRating" asp-controller="Anime" asp-action="Index">Rating</a>
+                        </li>
+
                     </ul>
 
                     <partial name="_LoginPartial" />
@@ -52,6 +60,25 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const animeCreatorBtn = document.getElementById('animeCreatorBtn');
+            const creatorMenu = document.getElementById('creatorMenu');
+
+            if (animeCreatorBtn && creatorMenu) {
+                animeCreatorBtn.addEventListener('mouseenter', function () {
+                    const rect = animeCreatorBtn.getBoundingClientRect();
+                    creatorMenu.style.top = `${rect.bottom}px`;
+                    creatorMenu.style.left = `${rect.left}px`;
+                    creatorMenu.style.display = 'block';
+                });
+
+                creatorMenu.addEventListener('mouseleave', function () {
+                    creatorMenu.style.display = 'none';
+                });
+            }
+        });
+        </script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 </body>

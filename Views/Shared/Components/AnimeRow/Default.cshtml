@@ -8,7 +8,7 @@
             {
                 <div class="anime-item">
                     <a href="@Url.Action("Details", "Anime", new { id = item.Id })">
-                        <img src="@item.IconPath" alt="Anime Icon" class="rounded-image" />
+                        <img src="@ViewData["BaseUrl"]@item.IconPath" alt="Anime Icon" class="rounded-image" />
                     </a>
                 </div>
             }
