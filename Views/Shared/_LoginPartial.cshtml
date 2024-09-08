@@ -7,14 +7,18 @@
 <ul class="navbar-nav ml-auto">
     @if (SignInManager.IsSignedIn(User))
     {
-        <li class="nav-item dropdown creator-dropdown">
-            <a class="nav-link" href="#" id="creatorDropdown">Creator</a>
-            <div class="dropdown-menu creator-menu">
-                <a class="dropdown-item" asp-area="" asp-controller="Anime" asp-action="Create">Add New Anime</a>
-                <a class="dropdown-item" asp-area="" asp-route-id="@(UserManager.GetUserId(User))" asp-controller="Anime" asp-action="Index">My Anime</a>
-                
-            </div>
-        </li>
+        @if (User.IsInRole("Admin")||User.IsInRole("ContentCreator")||User.IsInRole("SubtitleCreator"))
+        {
+            <li class="nav-item dropdown creator-dropdown">
+                <a class="nav-link" href="#" id="creatorDropdown">Creator</a>
+                <div class="dropdown-menu creator-menu">
+                    <a class="dropdown-item" asp-area="" asp-controller="Anime" asp-action="Create">Add New Anime</a>
+                    <a class="dropdown-item" asp-area="" asp-route-id="@(UserManager.GetUserId(User))" asp-controller="Anime" asp-action="Index">My Anime</a>
+
+                </div>
+            </li>
+        }
+
         <li class="nav-item dropdown user-dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" aria-haspopup="true" aria-expanded="false">
                 <img src="/images/default-avatar.png" alt="User" class="rounded-circle" width="32" height="32">
