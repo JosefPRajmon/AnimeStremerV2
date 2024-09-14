@@ -119,8 +119,18 @@
         }
         break;
     default:
-
-
+        {
+            var animes = Model.Where(anime => anime.Episodes.Any(c => c.WatchProgres > 0)).ToList();
+            if (animes.Any())
+            {
+                @await Component.InvokeAsync("AnimeRow", new
+                    {
+                        AnimeList = animes,
+                        RowName = "Continue",
+                        BaseUrl = ViewData["baseUrl"]
+                    })
+            }
+        }
         break;
 }
 

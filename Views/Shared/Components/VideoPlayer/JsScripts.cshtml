@@ -13,6 +13,7 @@
 
     //proměné
     var videoID = 0;
+    var saveProgres = false;
     var videoSubLanguage = "cs-cz";
     var sourceSub = "";
 
@@ -50,14 +51,33 @@
             hideControlsTimeout = setTimeout(hideControls, 3000);
         }
     });
+    function startUpdating() {
+        intervalId = setInterval(() => {
+            if (saveProgres) {
+                UpdateWatchProgress();
+            } else {
+                clearInterval(intervalId);
+            }
+        }, 10000); 
+    }
+    function UpdateWatchProgress() {
+        fetch(`/saveProgress?id=${videoID}&timeSpan=${video.currentTime}`)
+            .then(response => response.json())
+            .then(data => {
+            })
+            .catch(error => console.error('Error:', error));
+    }
 
     // Play/Pause funkce
     function togglePlayPause() {
         if (video.paused) {
             video.play();
+            saveProgres = true;
+            startUpdating();
             playPauseBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
         } else {
             video.pause();
+            saveProgres = false;
             playPauseBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
         }
     }
@@ -143,7 +163,7 @@
     const closeButton = document.getElementById('close-video');
 
     
-        function loadVideo(epID) {
+        function loadVideo(epID,time = "") {
         video.src = `${ window.location.origin }/video?id=${epID}`;
             videoContainer.style.display = "block";
             videoID = epID;
@@ -158,7 +178,10 @@
                 videoContainer.msRequestFullscreen();
             }
         loadSubtitleLanguages();
-            
+        startUpdating()
+            if (time!="") {
+            video.currentTime = time;
+            }
         }
     const subtitleBtn = document.getElementById('subtitle-btn');
     const subtitleMenu = document.getElementById('subtitle-menu');

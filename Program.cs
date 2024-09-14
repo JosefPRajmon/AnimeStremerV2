@@ -107,35 +107,7 @@ app.MapGet("/video", async (HttpContext context, AnimeDbContext dbContext, IWebH
             context.Response.Headers.Add("Content-Range", $"bytes {start}-{end}/{fileLength}");
         }
 
-        if (!string.IsNullOrEmpty(userId))
-        {
-            try
-            {
-                var progress = await dbContext.WatchProgresses
-                    .FirstOrDefaultAsync(wp => wp.UserId == userId && wp.EpisodeId == episodeId);
 
-                if (progress == null)
-                {
-                    progress = new WatchProgress
-                    {
-                        UserId = userId,
-                        EpisodeId = episodeId,
-                        Timestamp = TimeSpan.FromSeconds(start)
-                    };
-                    dbContext.WatchProgresses.Add(progress);
-                }
-                else
-                {
-                    progress.Timestamp = TimeSpan.FromSeconds(start);
-                }
-
-                await dbContext.SaveChangesAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                // Pokračujeme ve streamování videa i když se nepodařilo uložit pokrok
-            }
-        }
         using var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.Asynchronous);
         fileStream.Seek(start, SeekOrigin.Begin);
 
@@ -148,6 +120,7 @@ app.MapGet("/video", async (HttpContext context, AnimeDbContext dbContext, IWebH
         return Results.Problem($"An error occurred: {ex.Message}");
     }
 });
+
 app.MapGet("/allSsubtitles", async (HttpContext context, AnimeDbContext dbContext) =>
 {
     string id = context.Request.Query["id"].ToString();
@@ -189,6 +162,58 @@ app.MapGet("/subtitles", async (HttpContext context, AnimeDbContext dbContext, I
     }
 });
 
+app.MapGet("/saveProgress", async (HttpContext context, AnimeDbContext dbContext) =>
+{
+    if (!int.TryParse(context.Request.Query["id"], out int episodeId))
+    {
+        return Results.BadRequest("Invalid episode ID");
+    }
+
+    string userId = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
+    if (string.IsNullOrEmpty(userId))
+    {
+        return Results.Unauthorized();
+    }
+
+    var tsFromServer = context.Request.Query["timeSpan"].ToString();
+    if (!double.TryParse(tsFromServer, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double seconds))
+    {
+        return Results.BadRequest("Invalid timeSpan format");
+    }
+
+    var timestamp = TimeSpan.FromSeconds(seconds);
+
+    try
+    {
+        var progress = await dbContext.WatchProgresses
+            .FirstOrDefaultAsync(wp => wp.UserId == userId && wp.EpisodeId == episodeId);
+
+        if (progress == null)
+        {
+            progress = new WatchProgress
+            {
+                UserId = userId,
+                EpisodeId = episodeId,
+                Timestamp = timestamp
+            };
+            dbContext.WatchProgresses.Add(progress);
+        }
+        else
+        {
+            progress.Timestamp = timestamp;
+        }
+
+        await dbContext.SaveChangesAsync();
+        return Results.Ok("Progress saved successfully");
+    }
+    catch (Exception ex)
+    {
+        // Log the exception
+        return Results.Problem("An error occurred while saving progress");
+    }
+});
+
+
 /**/
 using (var scope = app.Services.CreateScope())
 {
@@ -197,13 +222,9 @@ using (var scope = app.Services.CreateScope())
     await DbInitializer.SeedRoles(roleManager);
 }
 /**/
-app.UseAuthentication()/*.AddCokie(IdentityConstants.ApplicationScheme)*/;
+app.UseAuthentication();
 app.UseAuthorization();
-/*
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Anime}/{action=Index}/{id?}");
-*/
+
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllerRoute(
