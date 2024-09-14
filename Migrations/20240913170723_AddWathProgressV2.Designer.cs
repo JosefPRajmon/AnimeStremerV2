@@ -4,6 +4,7 @@ using AnimeStreamerV2.DbContextFile;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace test.Migrations
 {
     [DbContext(typeof(AnimeDbContext))]
-    partial class AnimeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240913170723_AddWathProgressV2")]
+    partial class AddWathProgressV2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,7 +68,10 @@ namespace test.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("EpisodeId")
+                    b.Property<int>("AnimeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EpisodeNumberId")
                         .HasColumnType("int");
 
                     b.Property<TimeSpan>("Timestamp")
@@ -75,12 +81,12 @@ namespace test.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserId1")
+                    b.Property<int>("UserId1")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EpisodeId");
+                    b.HasIndex("AnimeId");
 
                     b.HasIndex("UserId1");
 
@@ -499,17 +505,19 @@ namespace test.Migrations
 
             modelBuilder.Entity("AnimePlayerV2.Models.WatchProgress", b =>
                 {
-                    b.HasOne("AnimeStreamerV2.Models.AnimeEpisodeModel", "Episode")
+                    b.HasOne("AnimeStreamerV2.Models.AnimeEpisodeModel", "Anime")
                         .WithMany()
-                        .HasForeignKey("EpisodeId")
+                        .HasForeignKey("AnimeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("test.Models.AdminSystem.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId1");
+                        .HasForeignKey("UserId1")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Episode");
+                    b.Navigation("Anime");
 
                     b.Navigation("User");
                 });

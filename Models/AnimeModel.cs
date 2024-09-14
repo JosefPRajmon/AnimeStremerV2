@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using AnimePlayerV2.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
@@ -23,6 +24,7 @@ namespace AnimeStreamerV2.Models
 
         //episodes
         public List<AnimeEpisodeModel> Episodes { get; set; } = new List<AnimeEpisodeModel>();
+        public ICollection<Category>? Categories { get; set; }
     }
     public static class EnumExtensions
     {

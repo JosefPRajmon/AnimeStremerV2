@@ -1,5 +1,5 @@
 ﻿@model IEnumerable<AnimeStreamerV2.Models.AnimeModel>
-<div class="anime-component">
+<div class="anime-component" id="@ViewData["RowName"]">
     <h2>@ViewData["RowName"]</h2>
     <div class="anime-scroll-container">
         @foreach (var item in Model)
@@ -15,3 +15,10 @@
         }
     </div>
 </div>
+<script>
+     function chcangeOrient(id,display) {
+         const element = document.getElementById(id);
+         element.style.display = display;
+        element.classList.add('vertical-layout');
+    }
+</script>

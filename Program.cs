@@ -1,6 +1,8 @@
+using AnimePlayerV2.Models;
 using AnimeStreamerV2.DbContextFile;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using test.Models.AdminSystem;
 using test.Services;
 
@@ -66,16 +68,18 @@ app.UseRouting();
 
 app.MapGet("/video", async (HttpContext context, AnimeDbContext dbContext, IWebHostEnvironment env) =>
 {
-    string id = context.Request.Query["id"].ToString();
+    int episodeId = int.Parse(context.Request.Query["id"].ToString());
+    string userId = context.User.FindFirstValue(ClaimTypes.NameIdentifier); // Předpokládá se, že uživatel je přihlášen
+
     try
     {
-        var episode = await dbContext.Episodes.FindAsync(int.Parse(id));
+        var episode = await dbContext.Episodes.FindAsync(int.Parse($"{episodeId}"));
         if (episode == null)
         {
-            return Results.NotFound($"Episode with ID {id} not found.");
+            return Results.NotFound($"Episode with ID {episodeId} not found.");
         }
 
-        string path = Path.Combine(env.WebRootPath, "anime", $"{id}", $"{episode.VideoPath}{episode.VideoType}");//episode.VideoPath;
+        string path = Path.Combine(env.WebRootPath, "anime", $"{episodeId}", $"{episode.VideoPath}{episode.VideoType}");
         if (!System.IO.File.Exists(path))
         {
             return Results.NotFound($"File {path} not found.");
@@ -89,26 +93,53 @@ app.MapGet("/video", async (HttpContext context, AnimeDbContext dbContext, IWebH
         context.Response.Headers.Add("Content-Length", fileLength.ToString());
         context.Response.Headers.Add("Accept-Ranges", "bytes");
 
-        using var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.Asynchronous);
+        long start = 0;
+        long end = fileLength - 1;
 
         if (context.Request.Headers.Range.Count > 0)
         {
-            // Handle range requests for resuming playback
             var rangeHeader = context.Request.Headers.Range.ToString();
             var range = rangeHeader.Replace("bytes=", "").Split('-');
-            var start = long.Parse(range[0]);
-            var end = range.Length > 1 && !string.IsNullOrEmpty(range[1]) ? long.Parse(range[1]) : fileLength - 1;
+            start = long.Parse(range[0]);
+            end = range.Length > 1 && !string.IsNullOrEmpty(range[1]) ? long.Parse(range[1]) : fileLength - 1;
 
             context.Response.StatusCode = 206;
             context.Response.Headers.Add("Content-Range", $"bytes {start}-{end}/{fileLength}");
-            fileStream.Seek(start, SeekOrigin.Begin);
-            await fileStream.CopyToAsync(context.Response.Body, bufferSize, context.RequestAborted);
         }
-        else
+
+        if (!string.IsNullOrEmpty(userId))
         {
-            // Stream the entire file
-            await fileStream.CopyToAsync(context.Response.Body, bufferSize, context.RequestAborted);
+            try
+            {
+                var progress = await dbContext.WatchProgresses
+                    .FirstOrDefaultAsync(wp => wp.UserId == userId && wp.EpisodeId == episodeId);
+
+                if (progress == null)
+                {
+                    progress = new WatchProgress
+                    {
+                        UserId = userId,
+                        EpisodeId = episodeId,
+                        Timestamp = TimeSpan.FromSeconds(start)
+                    };
+                    dbContext.WatchProgresses.Add(progress);
+                }
+                else
+                {
+                    progress.Timestamp = TimeSpan.FromSeconds(start);
+                }
+
+                await dbContext.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                // Pokračujeme ve streamování videa i když se nepodařilo uložit pokrok
+            }
         }
+        using var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.Asynchronous);
+        fileStream.Seek(start, SeekOrigin.Begin);
+
+        await fileStream.CopyToAsync(context.Response.Body, bufferSize, context.RequestAborted);
 
         return Results.Empty;
     }
