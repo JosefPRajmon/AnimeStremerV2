@@ -50,6 +50,28 @@ namespace AnimeStreamerV2.Controllers
             {
                 animes=await _context.Animes.Include(a => a.Categories).ToListAsync();
             }
+            if (User.Identity.IsAuthenticated)
+            {
+                string userId = (await _userManager.GetUserAsync(User)).Id;
+                if (!string.IsNullOrEmpty(userId))
+                {
+                    foreach (AnimeModel anime in animes)
+                    {
+                        anime.Episodes = _context.Episodes.Where(episode => episode.AnimeId == anime.Id).ToList();
+                        foreach (var episode in anime.Episodes)
+                        {
+                            var progress = await _context.WatchProgresses
+            .Where(wp => wp.UserId == userId && wp.EpisodeId == episode.Id)
+            .Select(wp => wp.Timestamp.TotalSeconds)
+            .FirstOrDefaultAsync();
+                            episode.WatchProgres = progress;
+                        }
+                    }
+
+
+                }
+            }
+
             return View(animes);
         }
 
@@ -65,7 +87,22 @@ namespace AnimeStreamerV2.Controllers
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             anime.Episodes = _context.Episodes.Where(a => a.AnimeId == id).ToList();
+            if (User.Identity.IsAuthenticated)
+            {
+                string userId = (await _userManager.GetUserAsync(User)).Id;
+                if (!string.IsNullOrEmpty(userId))
+                {
+                    foreach (var episode in anime.Episodes)
+                    {
+                        var progress = await _context.WatchProgresses
+        .Where(wp => wp.UserId == userId && wp.EpisodeId == episode.Id)
+        .Select(wp => wp.Timestamp.TotalSeconds)
+        .FirstOrDefaultAsync();
+                        episode.WatchProgres = progress;
+                    }
 
+                }
+            }
             if (anime == null)
             {
                 return NotFound();
