@@ -9,15 +9,15 @@ namespace AnimeStreamerV2.ViewComponents
         {
             ViewData["RowName"] = RowName;
             ViewData["BaseUrl"] = BaseUrl;
-           /* List<AnimeModel> a = AnimeList.ToList();
-            for (int i = 0; i<20; i++)
-            {
-                foreach (var item in AnimeList)
-                {
-                    a.Add(item);
-                }
-            }
-            AnimeList = a;*/
+            /* List<AnimeModel> a = AnimeList.ToList();
+             for (int i = 0; i<20; i++)
+             {
+                 foreach (var item in AnimeList)
+                 {
+                     a.Add(item);
+                 }
+             }
+             AnimeList = a;*/
             return View(AnimeList);
         }
     }

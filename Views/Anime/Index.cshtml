@@ -1,12 +1,18 @@
 ﻿@model IEnumerable<AnimeStreamerV2.Models.AnimeModel>
+@using AnimePlayerV2.Models;
 
 @{
     ViewData["Title"] = "Anime List";
     var allContris =@Model.Select(anime=>anime.CountryOfOrigin).Distinct();
+   var allCategories = Model.SelectMany(anime => anime.Categories )
+                         .GroupBy(c => c.Id)
+                         .Select(g => g.First())
+                         .ToList();
 
 }
 @section LinkCss {
     @await Html.PartialAsync("Components/AnimeRow/LinkCss")
+    <link rel="stylesheet" href="~/css/AnimeIndex.css" asp-append-version="true" />
 }
 <!--<h1 class="text-center mb-4 anime-title">Anime Collection</h1>
 
@@ -15,10 +21,15 @@
 </p>-->
 @switch (ViewData["fun"])
 {
-    case "BySometing":
+    case "ByCountry":
+        <select onchange="filterAnimes(this.value)">
+            <option value=""></option>
 
-        break;
-    default:
+            @foreach (var country in ViewBag.Countries)
+            {
+                <option value="@country.Value">@country.Text</option>
+            }
+    </select>
         @foreach (var item in allContris)
         {
             @await Component.InvokeAsync("AnimeRow", new
@@ -28,7 +39,95 @@
                     BaseUrl = ViewData["baseUrl"]
                 })
         }
+        @section scripts {
+            <script>
+                function filterAnimes(selectId){
+            
+            animeComponents.forEach(component => {
+                component.classList.remove('vertical-layout');
+                if (component.id == selectId) {
+                    chcangeOrient(component.id, "block")
+                }
+                else if (selectId == "") {
+                    component.style.display = "block";
+                }
+                else {
+                    component.style.display = "none";
+                }
+                
+            });
+                }
+            </script>
+        }
+        break;
+
+    case "ByCategory":
+
+        <label for="filtrCategoryCheckBox">Filter</label>
+    <input type="checkbox" id="filtrCategoryCheckBox"/>
+        <div id="filtrCategorySection">
+            <!--  onchange="chcangeOrient(this.value)"-->
+
+            @foreach (var category in allCategories)
+            {
+                <label for="Cat@(category.Name)">
+                    @category.Name
+
+                </label>
+
+                <input id="Cat@(category.Name)" type="checkbox" onchange="filterAnimes(this)" />
+            }
+    </div>
+    @section scripts{
+        <script>
+            var categoryArray = []
+            function filterAnimes(checkbox) {
+            const category = checkbox.id.replace("Cat", "");
+                if (checkbox.checked) {
+                categoryArray.push(category)
+                }
+                else {
+                const index = categoryArray.indexOf(category);
+                if (index > -1) {
+                    categoryArray.splice(index, 1);
+                }
+                }
+                console.log(categoryArray)
+                animeComponents.forEach(component => {
+                component.classList.remove('vertical-layout');
+                if (categoryArray.length == 0) {
+                        component.style.display = "block";
+                    }
+                    else if (categoryArray.includes(component.id)) {
+                    chcangeOrient(component.id, "block")
+                    }
+                    else {
+                        component.style.display = "none";
+                    }
+                })
+            }
+        </script>
+    }
+        @foreach (var item  in allCategories)
+        {
+            @await Component.InvokeAsync("AnimeRow", new
+                {
+                    AnimeList = Model.Where(anime => anime.Categories.Any(c => c.Id == item.Id)).ToList()?? new List<AnimeModel>(),
+                    RowName = item.Name.ToString(),
+                    BaseUrl = ViewData["baseUrl"]
+                })
+        }
+        break;
+    default:
+
 
         break;
 }
 
+    @section scriptsConst{
+        <script>
+const animeComponents = document.querySelectorAll('.anime-component');
+        </script>
+        
+
+    }

@@ -1,8 +1,11 @@
-﻿using AnimeStreamerV2.DbContextFile;
+﻿using AnimePlayerV2.Models;
+using AnimePlayerV2.Models.AdminSystem;
+using AnimeStreamerV2.DbContextFile;
 using AnimeStreamerV2.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using test.Models.AdminSystem;
 
@@ -23,6 +26,15 @@ namespace AnimeStreamerV2.Controllers
 
         public async Task<IActionResult> Index()
         {
+            var countries = Enum.GetValues(typeof(CountryEnum))
+    .Cast<CountryEnum>()
+    .Select(c => new SelectListItem
+    {
+        Value = c.ToString(),
+        Text = c.ToString()
+    }).ToList();
+
+            ViewBag.Countries = countries;
             ViewData["baseUrl"]= $"{Request.Scheme}://{Request.Host}/"/*+{ Request.Host.Port ?? 80}*/;
             ViewData["fun"]=$"{Request.Query["fun"]}";
 
@@ -36,7 +48,7 @@ namespace AnimeStreamerV2.Controllers
             }
             else
             {
-                animes=await _context.Animes.ToListAsync();
+                animes=await _context.Animes.Include(a => a.Categories).ToListAsync();
             }
             return View(animes);
         }
@@ -106,38 +118,74 @@ namespace AnimeStreamerV2.Controllers
         [Authorize(Roles = "Admin,ContentCreator")]
         public async Task<IActionResult> Edit(int id)
         {
-            var anime = await _context.Animes.FindAsync(id);
+            var anime = await _context.Animes
+                .Include(a => a.Categories)
+                .FirstOrDefaultAsync(an => an.Id == id);
+
             if (anime == null)
             {
                 return NotFound();
             }
-            return View(anime);
+
+            var allCategories = await _context.Categories.ToListAsync();
+            var viewModel = new AnimeEditViewModel
+            {
+                Anime = anime,
+                AllCategories = allCategories,
+                SelectedCategoryIds = anime.Categories.Select(c => c.Id).ToList()
+            };
+
+            return View(viewModel);
         }
-        //[Authorize]
+
         [HttpPost]
-        //[ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,ContentCreator")]
-        public async Task<IActionResult> Edit(int id, /*[Bind("Id,Name,Description")]*/ AnimeModel anime, IFormFile? AnimeIcon)
+        public async Task<IActionResult> Edit(int id, AnimeEditViewModel viewModel, IFormFile? AnimeIcon, List<int> SelectedCategoryIds)
         {
-            if (id != anime.Id)
+            if (id != viewModel.Anime.Id)
             {
                 return NotFound();
             }
-            if (AnimeIcon!=null)
+
+            if (AnimeIcon != null)
             {
-                await AddIcon(anime, AnimeIcon);
+                await AddIcon(viewModel.Anime, AnimeIcon);
             }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(anime);
+                    var animeToUpdate = await _context.Animes
+                        .Include(a => a.Categories)
+                        .FirstOrDefaultAsync(a => a.Id == id);
+
+                    if (animeToUpdate == null)
+                    {
+                        return NotFound();
+                    }
+
+                    // Update basic properties
+                    animeToUpdate.Name = viewModel.Anime.Name;
+                    animeToUpdate.Description = viewModel.Anime.Description;
+                    animeToUpdate.Rating = viewModel.Anime.Rating;
+
+                    // Update categories
+                    animeToUpdate.Categories.Clear();
+                    if (SelectedCategoryIds != null)
+                    {
+                        var selectedCategories = await _context.Categories
+                            .Where(c => SelectedCategoryIds.Contains(c.Id))
+                            .ToListAsync();
+                        animeToUpdate.Categories = selectedCategories;
+                    }
+
+                    _context.Update(animeToUpdate);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!AnimeExists(anime.Id))
+                    if (!AnimeExists(viewModel.Anime.Id))
                     {
                         return NotFound();
                     }
@@ -148,7 +196,10 @@ namespace AnimeStreamerV2.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(anime);
+
+            // If we got this far, something failed, redisplay form
+            viewModel.AllCategories = await _context.Categories.ToListAsync();
+            return View(viewModel);
         }
         [Authorize(Roles = "Admin,ContentCreator")]
         public async Task<IActionResult> Delete(int id)

@@ -4,6 +4,7 @@ using AnimeStreamerV2.DbContextFile;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace test.Migrations
 {
     [DbContext(typeof(AnimeDbContext))]
-    partial class AnimeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240908162833_AddCategoriesV4")]
+    partial class AddCategoriesV4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -55,36 +58,6 @@ namespace test.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
-                });
-
-            modelBuilder.Entity("AnimePlayerV2.Models.WatchProgress", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("EpisodeId")
-                        .HasColumnType("int");
-
-                    b.Property<TimeSpan>("Timestamp")
-                        .HasColumnType("time");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("UserId1")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EpisodeId");
-
-                    b.HasIndex("UserId1");
-
-                    b.ToTable("WatchProgresses");
                 });
 
             modelBuilder.Entity("AnimeStreamerV2.Models.AnimeEpisodeModel", b =>
@@ -442,46 +415,6 @@ namespace test.Migrations
                     b.ToTable("Subscriptions");
                 });
 
-            modelBuilder.Entity("test.Models.AdminSystem.User", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("IsAdmin")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsContentCreator")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsSubtitleCreator")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("SubscriptionId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SubscriptionId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("User");
-                });
-
             modelBuilder.Entity("AnimeModelCategory", b =>
                 {
                     b.HasOne("AnimeStreamerV2.Models.AnimeModel", null)
@@ -495,23 +428,6 @@ namespace test.Migrations
                         .HasForeignKey("CategoriesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("AnimePlayerV2.Models.WatchProgress", b =>
-                {
-                    b.HasOne("AnimeStreamerV2.Models.AnimeEpisodeModel", "Episode")
-                        .WithMany()
-                        .HasForeignKey("EpisodeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("test.Models.AdminSystem.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId1");
-
-                    b.Navigation("Episode");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("AnimeStreamerV2.Models.AnimeEpisodeModel", b =>
@@ -592,21 +508,6 @@ namespace test.Migrations
                     b.Navigation("Subscription");
                 });
 
-            modelBuilder.Entity("test.Models.AdminSystem.User", b =>
-                {
-                    b.HasOne("test.Models.AdminSystem.Subscription", "Subscription")
-                        .WithMany()
-                        .HasForeignKey("SubscriptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("test.Models.AdminSystem.User", null)
-                        .WithMany("ConnectedAccounts")
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("Subscription");
-                });
-
             modelBuilder.Entity("AnimeStreamerV2.Models.AnimeEpisodeModel", b =>
                 {
                     b.Navigation("Subtitles");
@@ -620,11 +521,6 @@ namespace test.Migrations
             modelBuilder.Entity("test.Models.AdminSystem.Subscription", b =>
                 {
                     b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("test.Models.AdminSystem.User", b =>
-                {
-                    b.Navigation("ConnectedAccounts");
                 });
 #pragma warning restore 612, 618
         }
