@@ -1,6 +1,4 @@
-﻿
-.anime-component {
-    height: 33.33%; /* 1/3 stránky */
+﻿.anime-component {
     margin-bottom: 20px;
 }
 
@@ -8,26 +6,43 @@
     display: flex;
     overflow-x: auto;
     padding-bottom: 10px;
+    transition: all 0.3s ease;
 }
 
 .anime-item {
     flex: 0 0 auto;
     margin-right: 10px;
+    margin-bottom: 10px;
 }
 
 .rounded-image {
-    border-radius: 10px; /* zakulacené rohy */
-    max-width: 100px; /* nebo jiná vhodná velikost */
-    height: 100%;
+    border-radius: 10px;
+    width: 100px;
+    height: 150px;
+    object-fit: cover;
 }
 
-/* Skrytí scrollbaru pro WebKit prohlížeče */
 .anime-scroll-container::-webkit-scrollbar {
     display: none;
 }
 
-/* Skrytí scrollbaru pro IE, Edge a Firefox */
 .anime-scroll-container {
-    -ms-overflow-style: none; /* IE a Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Vertikální rozložení */
+.vertical-layout .anime-scroll-container {
+    flex-wrap: wrap;
+    overflow-x: hidden;
+    justify-content: flex-start;
+}
+
+.vertical-layout .anime-item {
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.toggle-layout {
+    margin-bottom: 10px;
 }

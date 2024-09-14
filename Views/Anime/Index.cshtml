@@ -1,13 +1,19 @@
 ﻿@using test.Models
 @model IEnumerable<AnimeStreamerV2.Models.AnimeModel>
+@using AnimePlayerV2.Models;
 
 @{
     ViewData["Title"] = "Anime List";
     var allContris =@Model.Select(anime=>anime.CountryOfOrigin).Distinct();
+   var allCategories = Model.SelectMany(anime => anime.Categories )
+                         .GroupBy(c => c.Id)
+                         .Select(g => g.First())
+                         .ToList();
 
 }
 @section LinkCss {
     @await Html.PartialAsync("Components/AnimeRow/LinkCss")
+    <link rel="stylesheet" href="~/css/AnimeIndex.css" asp-append-version="true" />
 }
 <!--<h1 class="text-center mb-4 anime-title">Anime Collection</h1>
 

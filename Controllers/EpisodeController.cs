@@ -27,11 +27,13 @@ namespace AnimeStreamerV2.Controllers
             _logger = logger;
         }
 
-        /* public IActionResult Index(int id)
-         {
-             var episodeModels = _context.Episodes.Where(a => a.AnimeId == id).ToList();
-             return View(episodeModels);
-         }*/
+        public async Task<IActionResult> Index(int id)
+        {
+
+            string userId = (await _userManager.GetUserAsync(User)).Id;
+            var episodeModels = _context.Episodes.Where(a => a.AnimeId == id).ToList();
+            return View(episodeModels);
+        }
         public IActionResult Create(int id)
         {
             List<AnimeEpisodeModel> allepisode = _context.Episodes.Where(a => a.AnimeId == id).ToList();

@@ -28,7 +28,7 @@
                             <a class="nav-link text-dark" asp-area="" asp-route-fun="ByCountry" asp-controller="Anime" asp-action="Index">Contry</a>
                         </li>
                         <li class="nav-item">
-                            <a class="dropdown-item" asp-area="" asp-route-fun="ByCategory" asp-controller="Anime" asp-action="Index">Kategory</a>
+                            <a class="dropdown-item" asp-area="" asp-route-fun="ByCategory" asp-controller="Anime" asp-action="Index">Category</a>
                         </li>                        
                         <li class="nav-item">
                             <a class="dropdown-item" asp-area="" asp-route-fun="ByRerease" asp-controller="Anime" asp-action="Index">Rerease</a>
@@ -59,6 +59,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("scriptsConst", required: false)
     @await RenderSectionAsync("Scripts", required: false)
     <script>
         document.addEventListener('DOMContentLoaded', function () {

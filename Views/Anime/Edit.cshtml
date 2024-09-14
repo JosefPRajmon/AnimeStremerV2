@@ -1,28 +1,40 @@
-﻿@model AnimeStreamerV2.Models.AnimeModel
-@using AnimeStreamerV2.Models
-@using test.Models
+﻿@model AnimePlayerV2.Models.AnimeEditViewModel
 @{
     ViewData["Title"] = "Edit Anime";
 }
 <h1>Edit Anime</h1>
 <form asp-action="Edit" method="post" enctype="multipart/form-data">
-    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="Anime.Id" />
     @Html.AntiForgeryToken()
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="form-group mb-3">
-        <label asp-for="Name" class="control-label">Name</label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
+        <label asp-for="Anime.Name" class="control-label">Name</label>
+        <input asp-for="Anime.Name" class="form-control" />
+        <span asp-validation-for="Anime.Name" class="text-danger"></span>
     </div>
     <div class="form-group mb-3">
-        <label asp-for="Description" class="control-label">Description</label>
-        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
+        <label asp-for="Anime.Description" class="control-label">Description</label>
+        <textarea asp-for="Anime.Description" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="Anime.Description" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="Rating" class="control-label"></label>
-        <select asp-for="Rating" asp-items="EnumHelpers.GetEnumSelectList<AgeRating>()" class="form-control"></select>
-        <span asp-validation-for="Rating" class="text-danger"></span>
+        <label asp-for="Anime.Rating" class="control-label"></label>
+        <select asp-for="Anime.Rating" asp-items="EnumHelpers.GetEnumSelectList<AgeRating>()" class="form-control"></select>
+        <span asp-validation-for="Anime.Rating" class="text-danger"></span>
+    </div>
+    <div class="form-group mb-3">
+        <label>Categories</label>
+        @for (int i = 0; i < Model.AllCategories.Count; i++)
+        {
+            <div class="form-check">
+                <input type="checkbox"
+                       name="SelectedCategoryIds"
+                       value="@Model.AllCategories[i].Id"
+                @(Model.SelectedCategoryIds.Contains(Model.AllCategories[i].Id) ? "checked" : "")
+                       class="form-check-input" />
+                <label class="form-check-label">@Model.AllCategories[i].Name</label>
+            </div>
+        }
     </div>
     <div class="form-group mb-3">
         <input type="file" name="AnimeIcon" />

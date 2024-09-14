@@ -23,6 +23,7 @@ namespace AnimeStreamerV2.Models
 
         //episodes
         public List<AnimeEpisodeModel> Episodes { get; set; } = new List<AnimeEpisodeModel>();
+        public ICollection<Category>? Categories { get; set; }
     }
     public static class EnumExtensions
     {
