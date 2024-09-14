@@ -35,5 +35,6 @@ namespace AnimeStreamerV2.Models
 
         // subtitles
         public List<SubtitleModel> Subtitles { get; set; } = new List<SubtitleModel>();
+        public double? WatchProgres { get; set; }
     }
 }
