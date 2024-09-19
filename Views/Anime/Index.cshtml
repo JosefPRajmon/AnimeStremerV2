@@ -1,4 +1,5 @@
-﻿@model IEnumerable<AnimeStreamerV2.Models.AnimeModel>
+﻿@using test.Models
+@model IEnumerable<AnimeStreamerV2.Models.AnimeModel>
 
 @{
     ViewData["Title"] = "Anime List";
@@ -11,27 +12,190 @@
 <p>
     <a href="@Url.Action("Create", "Anime")" class="btn btn-anime mb-3">Add New Anime</a>
 </p>-->
-@await Component.InvokeAsync("AnimeRow",new{
-        AnimeList =  Model,
-        RowName="Test"
-})
-@await Component.InvokeAsync("AnimeRow",new{
-        AnimeList =  Model,
-        RowName="Test"
-})
-@await Component.InvokeAsync("AnimeRow",new{
-        AnimeList =  Model,
-        RowName="Test"
-})
-@await Component.InvokeAsync("AnimeRow",new{
-        AnimeList =  Model,
-        RowName="Test"
-})
-@await Component.InvokeAsync("AnimeRow",new{
-        AnimeList =  Model,
-        RowName="Test"
-})
-@await Component.InvokeAsync("AnimeRow",new{
-        AnimeList =  Model,
-        RowName="Test"
-})
+@switch (ViewData["fun"])
+{
+    case "ByRelease":
+        <div>
+            @{
+                var animeByYear = Model
+                                    .SelectMany(anime => anime.Episodes.Select(episode => new { Anime = anime, Year = episode.ReleaseDate.Year }))
+                                    .GroupBy(x => x.Year)
+                                    .OrderByDescending(g => g.Key);
+            }
+            <select onchange="filterAnimes(this.value)">
+                <option value=""></option>
+
+                @foreach (var country in animeByYear.Select(x=>x.Key).Distinct().ToList())
+                {
+                    <option value="@country">@country</option>
+                }
+</select>
+            @foreach (var yearGroup in animeByYear)
+            {
+
+                @await Component.InvokeAsync("AnimeRow", new
+                    {
+                        AnimeList = yearGroup.Select(x => x.Anime).Distinct().ToList(),
+                        RowName = yearGroup.Key.ToString(),
+                        BaseUrl = ViewData["baseUrl"]
+                    })
+            }
+            @section scripts {
+        <script>
+            function filterAnimes(selectId) {
+
+                animeComponents.forEach(component => {
+                    component.classList.remove('vertical-layout');
+                    if (component.id == selectId) {
+                        chcangeOrient(component.id, "block")
+                    }
+                    else if (selectId == "") {
+                        component.style.display = "block";
+                    }
+                    else {
+                        component.style.display = "none";
+                    }
+
+                });
+            }
+        </script>
+            }
+        </div>
+    break;
+    case "ByCountry":
+        <select onchange="filterAnimes(this.value)">
+            <option value=""></option>
+
+            @foreach (var country in ViewBag.Countries)
+            {
+                <option value="@country.Value">@country.Text</option>
+            }
+    </select>
+        @foreach (var item in Model.Select(anime => anime.CountryOfOrigin).Distinct())
+        {
+            @await Component.InvokeAsync("AnimeRow", new
+                {
+                    AnimeList = Model.Where(anime => anime.CountryOfOrigin== item.ToString()).ToList(),
+                    RowName = item.ToString(),
+                    BaseUrl = ViewData["baseUrl"]
+                })
+        }
+        @section scripts {
+            <script>
+                function filterAnimes(selectId){
+            
+            animeComponents.forEach(component => {
+                component.classList.remove('vertical-layout');
+                if (component.id == selectId) {
+                    chcangeOrient(component.id, "block")
+                }
+                else if (selectId == "") {
+                    component.style.display = "block";
+                }
+                else {
+                    component.style.display = "none";
+                }
+                
+            });
+                }
+            </script>
+        }
+        break;
+
+    case "ByCategory":
+
+        <label for="filtrCategoryCheckBox">Filter</label>
+        <input type="checkbox" id="filtrCategoryCheckBox"/>
+        <div id="filtrCategorySection">
+            @{
+                var allCategories = Model.SelectMany(anime => anime.Categories).GroupBy(c => c.Id).Select(g => g.First()).ToList();
+            }
+            @foreach (var category in allCategories)
+            {
+                <label for="Cat@(category.Name)">
+                    @category.Name
+
+                </label>
+
+                <input id="Cat@(category.Name)" type="checkbox" onchange="filterAnimes(this)" />
+            }
+    </div>
+    @section scripts{
+        <script>
+            var categoryArray = []
+            function filterAnimes(checkbox) {
+            const category = checkbox.id.replace("Cat", "");
+                if (checkbox.checked) {
+                categoryArray.push(category)
+                }
+                else {
+                const index = categoryArray.indexOf(category);
+                if (index > -1) {
+                    categoryArray.splice(index, 1);
+                }
+                }
+                console.log(categoryArray)
+                animeComponents.forEach(component => {
+                component.classList.remove('vertical-layout');
+                if (categoryArray.length == 0) {
+                        component.style.display = "block";
+                    }
+                    else if (categoryArray.includes(component.id)) {
+                    chcangeOrient(component.id, "block")
+                    }
+                    else {
+                        component.style.display = "none";
+                    }
+                })
+            }
+        </script>
+    }
+        @foreach (var item  in allCategories)
+        {
+            @await Component.InvokeAsync("AnimeRow", new
+                {
+                    AnimeList = Model.Where(anime => anime.Categories.Any(c => c.Id == item.Id)).ToList()?? new List<AnimeModel>(),
+                    RowName = item.Name.ToString(),
+                    BaseUrl = ViewData["baseUrl"]
+                })
+        }
+        break;
+    case "ByRating":
+    <div>
+            @{
+                var allRatings = Model.Select(anime => anime.Rating).Distinct().ToList();
+            }
+            @foreach (var item in allRatings)
+            {
+                @await Component.InvokeAsync("AnimeRow", new
+                    {
+                        AnimeList = Model.Where(anime => anime.Rating==item).ToList()?? new List<AnimeModel>(),
+                        RowName = EnumHelpers.GetEnumDisplayName((AgeRating)item),
+                        BaseUrl = ViewData["baseUrl"]
+                    })
+            }
+    </div>
+        break;
+    default:
+        {
+            var animes = Model.Where(anime => anime.Episodes.Any(c => c.WatchProgres > 0)).ToList();
+            if (animes.Any())
+            {
+                @await Component.InvokeAsync("AnimeRow", new
+                    {
+                        AnimeList = animes,
+                        RowName = "Continue",
+                        BaseUrl = ViewData["baseUrl"]
+                    })
+            }
+        }
+        break;
+}
+
+    @section scriptsConst{
+        <script>
+const animeComponents = document.querySelectorAll('.anime-component');
+        </script>
+        
+
+    }

@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Reflection;
+using test.Models;
 
 namespace AnimeStreamerV2.Models
 {
@@ -33,34 +33,6 @@ namespace AnimeStreamerV2.Models
                 ?.GetName() ?? enumValue.ToString();
         }
     }
-    public enum AgeRating
-    {
-        [Display(Name = "G – General Audiences")]
-        GeneralAudiences,
 
-        [Display(Name = "PG – Parental Guidance Suggested")]
-        ParentalGuidanceSuggested,
 
-        [Display(Name = "PG-13 – Parents Strongly Cautioned")]
-        ParentsStronglyCautioned,
-
-        [Display(Name = "R – Restricted")]
-        Restricted,
-
-        [Display(Name = "NC-17 – Adults Only")]
-        AdultsOnly
-    }
-    public static class EnumHelpers
-    {
-        public static IEnumerable<SelectListItem> GetEnumSelectList<TEnum>() where TEnum : Enum
-        {
-            return Enum.GetValues(typeof(TEnum))
-                .Cast<TEnum>()
-                .Select(e => new SelectListItem
-                {
-                    Value = e.ToString(),
-                    Text = e.GetDisplayName() // Použití vaší existující metody GetDisplayName
-                });
-        }
-    }
 }
