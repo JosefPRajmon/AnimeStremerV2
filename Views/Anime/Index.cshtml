@@ -4,11 +4,9 @@
 
 @{
     ViewData["Title"] = "Anime List";
-    var allContris =@Model.Select(anime=>anime.CountryOfOrigin).Distinct();
-   var allCategories = Model.SelectMany(anime => anime.Categories )
-                         .GroupBy(c => c.Id)
-                         .Select(g => g.First())
-                         .ToList();
+   // var allContris =@Model.Select(anime=>anime.CountryOfOrigin).Distinct();
+   //var allCategories = Model.SelectMany(anime => anime.Categories ).GroupBy(c => c.Id).Select(g => g.First()).ToList();
+
 
 }
 @section LinkCss {

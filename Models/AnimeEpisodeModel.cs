@@ -10,10 +10,11 @@ namespace AnimeStreamerV2.Models
         public int AnimeId { get; set; }
 
 
-
+        //data
         [Required(ErrorMessage = "The Name field is required.")]
         public string Name { get; set; }
         public string? Description { get; set; }
+        public DateTime ReleaseDate { get; set; } = DateTime.Now;
 
         //pozicion
         public bool Trailer { get; set; } = false;
