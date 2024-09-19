@@ -3,11 +3,9 @@
 
 @{
     ViewData["Title"] = "Anime List";
-    var allContris =@Model.Select(anime=>anime.CountryOfOrigin).Distinct();
-   var allCategories = Model.SelectMany(anime => anime.Categories )
-                         .GroupBy(c => c.Id)
-                         .Select(g => g.First())
-                         .ToList();
+   // var allContris =@Model.Select(anime=>anime.CountryOfOrigin).Distinct();
+   //var allCategories = Model.SelectMany(anime => anime.Categories ).GroupBy(c => c.Id).Select(g => g.First()).ToList();
+
 
 }
 @section LinkCss {
@@ -21,6 +19,54 @@
 </p>-->
 @switch (ViewData["fun"])
 {
+    case "ByRelease":
+        <div>
+            @{
+                var animeByYear = Model
+                                    .SelectMany(anime => anime.Episodes.Select(episode => new { Anime = anime, Year = episode.ReleaseDate.Year }))
+                                    .GroupBy(x => x.Year)
+                                    .OrderByDescending(g => g.Key);
+            }
+            <select onchange="filterAnimes(this.value)">
+                <option value=""></option>
+
+                @foreach (var country in animeByYear.Select(x=>x.Key).Distinct().ToList())
+                {
+                    <option value="@country">@country</option>
+                }
+</select>
+            @foreach (var yearGroup in animeByYear)
+            {
+
+                @await Component.InvokeAsync("AnimeRow", new
+                    {
+                        AnimeList = yearGroup.Select(x => x.Anime).Distinct().ToList(),
+                        RowName = yearGroup.Key.ToString(),
+                        BaseUrl = ViewData["baseUrl"]
+                    })
+            }
+            @section scripts {
+        <script>
+            function filterAnimes(selectId) {
+
+                animeComponents.forEach(component => {
+                    component.classList.remove('vertical-layout');
+                    if (component.id == selectId) {
+                        chcangeOrient(component.id, "block")
+                    }
+                    else if (selectId == "") {
+                        component.style.display = "block";
+                    }
+                    else {
+                        component.style.display = "none";
+                    }
+
+                });
+            }
+        </script>
+            }
+        </div>
+    break;
     case "ByCountry":
         <select onchange="filterAnimes(this.value)">
             <option value=""></option>
@@ -30,7 +76,7 @@
                 <option value="@country.Value">@country.Text</option>
             }
     </select>
-        @foreach (var item in allContris)
+        @foreach (var item in Model.Select(anime => anime.CountryOfOrigin).Distinct())
         {
             @await Component.InvokeAsync("AnimeRow", new
                 {
@@ -64,10 +110,12 @@
     case "ByCategory":
 
         <label for="filtrCategoryCheckBox">Filter</label>
-    <input type="checkbox" id="filtrCategoryCheckBox"/>
+        <input type="checkbox" id="filtrCategoryCheckBox"/>
         <div id="filtrCategorySection">
             <!--  onchange="chcangeOrient(this.value)"-->
-
+            @{
+                var allCategories = Model.SelectMany(anime => anime.Categories).GroupBy(c => c.Id).Select(g => g.First()).ToList();
+            }
             @foreach (var category in allCategories)
             {
                 <label for="Cat@(category.Name)">

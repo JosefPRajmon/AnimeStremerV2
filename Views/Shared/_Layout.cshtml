@@ -1,4 +1,8 @@
 ﻿@using AnimeStreamerV2.Models;
+@using Microsoft.AspNetCore.Identity
+@using test.Models.AdminSystem
+
+@inject SignInManager<ApplicationUser> SignInManager
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29,10 +33,13 @@
                         </li>
                         <li class="nav-item">
                             <a class="dropdown-item" asp-area="" asp-route-fun="ByCategory" asp-controller="Anime" asp-action="Index">Category</a>
-                        </li>                        
+                        </li>    
+                         @if (SignInManager.IsSignedIn(User))
+    {
                         <li class="nav-item">
-                            <a class="dropdown-item" asp-area="" asp-route-fun="ByRerease" asp-controller="Anime" asp-action="Index">Rerease</a>
+                            <a class="dropdown-item" asp-area="" asp-route-fun="ByRelease" asp-controller="Anime" asp-action="Index">Release</a>
                         </li>
+    }
                         <li class="nav-item">
                             <a class="dropdown-item" asp-area="" asp-route-fun="ByRating" asp-controller="Anime" asp-action="Index">Rating</a>
                         </li>
