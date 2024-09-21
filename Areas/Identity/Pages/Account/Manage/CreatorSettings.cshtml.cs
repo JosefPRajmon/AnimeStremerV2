@@ -1,4 +1,4 @@
-using AnimePlayerV2.Models.AdminSystem;
+using AnimePlayerV2.Models.AdminSystem.Languages;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

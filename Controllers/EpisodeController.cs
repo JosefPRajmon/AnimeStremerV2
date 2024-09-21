@@ -247,8 +247,16 @@ namespace AnimeStreamerV2.Controllers
             else if (fileType == "subtitle")
             {
                 string subId = request.SubId;
-                SubtitleModel subtitle = subtitle=await _context.Subtitles.FirstOrDefaultAsync(s => s.Id == (subId!=null ? int.Parse(subId) : null));
+                SubtitleModel subtitle = new SubtitleModel();
 
+                if (subId!="null")
+                {
+                    subtitle =await _context.Subtitles.FirstOrDefaultAsync(s => s.Id == (subId!=null ? int.Parse(subId) : null));
+                }
+                else
+                {
+                    request.Version = "1.0";
+                }
 
                 subtitle.AnimeEpisodeModelId = episode.Id;
                 subtitle.Language = request.Language;

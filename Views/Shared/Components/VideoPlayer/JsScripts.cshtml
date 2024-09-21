@@ -1,4 +1,5 @@
-﻿<script src="~/js/subtitles-octopus.js"></script>
+﻿@using AnimePlayerV2.Models.AdminSystem.Languages
+<script src="~/js/subtitles-octopus.js"></script>
 <script>
     //proměné z dokumentu -constanty 
     const videoContainer = document.querySelector('.video-container');
@@ -20,11 +21,17 @@
     let hideControlsTimeout;
     //funce pro vyměnu hodnot
     function getLanguageName(langCode) {
-        const languageMap = {
-            'cs-cz': 'Čeština',
-            'en-gb': 'GB-English',
-            // Přidejte další mapování podle potřeby
-        };
+    @{
+        var countryMap = Enum.GetValues(typeof(CountryCodeEnum))
+        .Cast<CountryCodeEnum>()
+        .ToDictionary(
+        code => code.ToString().ToLower(),
+        code => ((CountryEnum)((int)code)).ToString()
+        );
+    }
+
+                const languageMap = @Html.Raw(Json.Serialize(countryMap));
+
         return languageMap[langCode] || langCode;
     }
 

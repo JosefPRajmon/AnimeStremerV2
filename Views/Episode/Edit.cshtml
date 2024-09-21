@@ -1,7 +1,12 @@
-﻿@using AnimeStreamerV2.Models
+﻿@using AnimePlayerV2.Models.AdminSystem.Languages
+@using AnimeStreamerV2.Models
+@using Microsoft.AspNetCore.Identity
+@using test.Models.AdminSystem
+@inject UserManager<ApplicationUser> UserManager
 @model AnimeEpisodeModel
 @{
     ViewData["Title"] = "Create New Anime";
+    var user = await UserManager.GetUserAsync(User);
 }
 
 <div class="row justify-content-center">
@@ -83,7 +88,7 @@
                 const chunks = Math.ceil(file.size / chunkSize);
                 const episodeId = @Model.Id;
                // const csrfToken = document.cookie.split('; ').find(row => row.startsWith('XSRF-TOKEN=')).split('=')[1];
-                const selectedLanguage = "cs-cz"; // Toto by mělo být dynamicky nastaveno, pokud se mění
+                const selectedLanguage = `@((CountryCodeEnum)((int)Enum.Parse(typeof(CountryEnum), (user.Country))))`; // Toto by mělo být dynamicky nastaveno, pokud se mění
                 const token = document.getElementsByName("__RequestVerificationToken")[0].value;
                 for (let i = 0; i < chunks; i++) {
                     const start = i * chunkSize;

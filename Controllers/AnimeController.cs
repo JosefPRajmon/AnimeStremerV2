@@ -1,5 +1,5 @@
 ﻿using AnimePlayerV2.Models;
-using AnimePlayerV2.Models.AdminSystem;
+using AnimePlayerV2.Models.AdminSystem.Languages;
 using AnimeStreamerV2.DbContextFile;
 using AnimeStreamerV2.Models;
 using Microsoft.AspNetCore.Authorization;

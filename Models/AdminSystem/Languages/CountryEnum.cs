@@ -1,4 +1,4 @@
-﻿namespace AnimePlayerV2.Models.AdminSystem
+﻿namespace AnimePlayerV2.Models.AdminSystem.Languages
 {
     /// <summary>
     /// all creators country
@@ -8,7 +8,8 @@
         Japan,
         Czech,
         Korea,
-        China
+        China,
+        Brith_english
 
     }
 }
