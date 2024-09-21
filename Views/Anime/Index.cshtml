@@ -194,6 +194,28 @@
                         BaseUrl = ViewData["baseUrl"]
                     })
             }
+            try
+            {
+                var userId = ViewData["userid"] as string;
+                if (userId != null)
+                {
+                    var userAnimes = Model.Where(anim => anim.CreaterId == userId).ToList();
+
+                    if (userAnimes.Count()>0)
+                    {
+                        @await Component.InvokeAsync("AnimeRow", new
+                            {
+                                AnimeList = userAnimes,
+                                RowName = "My anime",
+                                BaseUrl = ViewData["baseUrl"]
+                            })
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+            }
         }
         break;
 }

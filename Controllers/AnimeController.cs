@@ -66,6 +66,7 @@ namespace AnimeStreamerV2.Controllers
             if (User.Identity.IsAuthenticated)
             {
                 string userId = (await _userManager.GetUserAsync(User)).Id;
+                ViewData["userid"] = userId;
                 if (!string.IsNullOrEmpty(userId))
                 {
                     foreach (AnimeModel anime in animes)
