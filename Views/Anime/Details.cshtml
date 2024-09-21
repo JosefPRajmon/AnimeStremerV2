@@ -69,8 +69,8 @@
                     {
                         if (user!=null)
                         {
-                            <div id="@(episode.Id)" class="episode-item" onclick="loadVideo(@(episode.Id),@(episode.WatchProgres))">
-                                <img src="@(ViewData["baseUrl"])@episode.EpisodaIcon" style="height:30vh;display: block; margin-left: auto; margin-right: auto;" alt="Anime Icon" /><br />
+                            <div id="@(episode.Id)" class="episode-item" onclick="loadVideo(@(episode.Id),@(episode.WatchProgress))">
+                                <img src="@(ViewData["baseUrl"])@episode.EpisodeIcon" style="height:30vh;display: block; margin-left: auto; margin-right: auto;" alt="Anime Icon" /><br />
                                 <p class="episode-name">@episode.Name  (@episode.Season : @episode.EpisodeNumber)</p>
                             </div>
                             <a href="@(ViewData["baseUrl"])Episode/Edit/@(episode.Id)">Edit  (@episode.Season : @episode.EpisodeNumber)</a>
@@ -78,7 +78,7 @@
                         else
                         {
                             <div id="@(episode.Id)" class="episode-item" onclick="window.location.href = `@(ViewData["baseUrl"])Identity/Account/Login?ReturnUrl=%2FAnime%2FDetails%2F@(Model.Id)#@(episode.Id)`">
-                                <img src="@(ViewData["baseUrl"])@episode.EpisodaIcon" style="height:30vh;display: block; margin-left: auto; margin-right: auto;" alt="Anime Icon" /><br />
+                                <img src="@(ViewData["baseUrl"])@episode.EpisodeIcon" style="height:30vh;display: block; margin-left: auto; margin-right: auto;" alt="Anime Icon" /><br />
                                 <p class="episode-name">@episode.Name  (@episode.Season : @episode.EpisodeNumber)</p>
                             </div>
                         }

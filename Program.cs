@@ -6,19 +6,20 @@ using System.Security.Claims;
 using test.Models.AdminSystem;
 using test.Services;
 
+#region Application Setup
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Konfigurace připojení k databázi
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<AnimeDbContext>(options =>
     options.UseSqlServer(connectionString));
+#endregion
 
-
-
+#region Identity Configuration
 // Konfigurace Identity
 builder.Services.Configure<IdentityOptions>(options =>
 {
-    // Nastaven� hesla
+    // Nastavení hesla
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
     options.Password.RequireNonAlphanumeric = true;
@@ -26,17 +27,19 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequiredLength = 6;
     options.Password.RequiredUniqueChars = 1;
 
-    // Nastaven� uzam�en� ��tu
+    // Nastavení uzamčení účtu
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
     options.Lockout.MaxFailedAccessAttempts = 5;
     options.Lockout.AllowedForNewUsers = true;
 
-    // Nastaven� u�ivatele
+    // Nastavení uživatele
     options.User.AllowedUserNameCharacters =
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
     options.User.RequireUniqueEmail = false;
 });
+
 builder.Services.AddRazorPages();
+
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.HttpOnly = true;
@@ -45,10 +48,13 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = "/Identity/Account/AccessDenied";
     options.SlidingExpiration = true;
 });
+
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AnimeDbContext>();
-/**/
+#endregion
+
+#region Application Pipeline Configuration
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -61,11 +67,10 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
+#endregion
 
-
-
+#region Custom Endpoints
 app.MapGet("/video", async (HttpContext context, AnimeDbContext dbContext, IWebHostEnvironment env) =>
 {
     int episodeId = int.Parse(context.Request.Query["id"].ToString());
@@ -213,18 +218,23 @@ app.MapGet("/saveProgress", async (HttpContext context, AnimeDbContext dbContext
     }
 });
 
+#endregion
 
-/**/
+#region Role Initialization
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
     await DbInitializer.SeedRoles(roleManager);
 }
-/**/
+#endregion
+
+#region Authentication and Authorization
 app.UseAuthentication();
 app.UseAuthorization();
+#endregion
 
+#region Routing Configuration
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllerRoute(
@@ -232,10 +242,15 @@ app.UseEndpoints(endpoints =>
         pattern: "{controller=Anime}/{action=Index}/{id?}");
     endpoints.MapRazorPages();
 });
+#endregion
+
+#region Final Role Initialization and App Start
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
     await RoleInitializer.InitializeAsync(roleManager);
 }
+
 app.Run();
+#endregion
