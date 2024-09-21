@@ -8,6 +8,9 @@ using test.Models.AdminSystem;
 
 namespace AnimeStreamerV2.Controllers
 {
+    /// <summary>
+    /// Controller for managing anime episodes.
+    /// </summary>
     [Authorize(Roles = "Admin,ContentCreator,SubtitleCreator")]
     public class EpisodeController : Controller
     {
@@ -17,6 +20,9 @@ namespace AnimeStreamerV2.Controllers
         private readonly ILogger<EpisodeController> _logger;
         private readonly UserManager<ApplicationUser> _userManager;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EpisodeController"/> class.
+        /// </summary>
         public EpisodeController(AnimeDbContext context, IWebHostEnvironment environment, ILogger<EpisodeController> logger, UserManager<ApplicationUser> userManager)
         {
             _context = context;
@@ -27,6 +33,10 @@ namespace AnimeStreamerV2.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Displays a list of episodes for a specific anime.
+        /// </summary>
+        /// <param name="id">The ID of the anime.</param>
         public async Task<IActionResult> Index(int id)
         {
 
@@ -34,6 +44,11 @@ namespace AnimeStreamerV2.Controllers
             var episodeModels = _context.Episodes.Where(a => a.AnimeId == id).ToList();
             return View(episodeModels);
         }
+
+        /// <summary>
+        /// Displays the form for creating a new episode.
+        /// </summary>
+        /// <param name="id">The ID of the anime.</param>
         public IActionResult Create(int id)
         {
             List<AnimeEpisodeModel> allepisode = _context.Episodes.Where(a => a.AnimeId == id).ToList();
@@ -54,6 +69,11 @@ namespace AnimeStreamerV2.Controllers
             return View(new AnimeEpisodeModel() { AnimeId = id });
         }
 
+        /// <summary>
+        /// Processes the creation of a new episode.
+        /// </summary>
+        /// <param name="episode">The episode model to create.</param>
+        /// <param name="nameAutoCreateString">Indicates whether to auto-create the episode name.</param>
         [HttpPost]
         public async Task<IActionResult> Create([Bind("AnimeId,Name,EpisodeNumber,Season")] AnimeEpisodeModel episode, string nameAutoCreateString)
         {
@@ -75,6 +95,10 @@ namespace AnimeStreamerV2.Controllers
             return RedirectToAction("Details", "Anime", new { id = episode.AnimeId });
         }
 
+        /// <summary>
+        /// Displays the form for editing an existing episode.
+        /// </summary>
+        /// <param name="id">The ID of the episode to edit.</param>
         public async Task<IActionResult> Edit(int id)
         {
             var episode = await _context.Episodes.FindAsync(id);
@@ -89,6 +113,11 @@ namespace AnimeStreamerV2.Controllers
             return View(episode);
         }
 
+        /// <summary>
+        /// Processes the editing of an existing episode.
+        /// </summary>
+        /// <param name="episode">The updated episode model.</param>
+        /// <param name="nameAutoCreateString">Indicates whether to auto-create the episode name.</param>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(AnimeEpisodeModel episode, string nameAutoCreateString)
@@ -126,6 +155,15 @@ namespace AnimeStreamerV2.Controllers
             return View(episode);
         }
 
+        /// <summary>
+        /// Handles the upload of file chunks for episodes.
+        /// </summary>
+        /// <param name="chunk">The file chunk being uploaded.</param>
+        /// <param name="chunkIndex">The index of the current chunk.</param>
+        /// <param name="totalChunks">The total number of chunks for the file.</param>
+        /// <param name="id">The ID of the episode.</param>
+        /// <param name="fileType">The type of file being uploaded (video or subtitle).</param>
+        /// <param name="language">The language of the subtitle (optional).</param>
         [HttpPost]
         public async Task<IActionResult> AddEditFile(IFormFile chunk, int chunkIndex, int totalChunks, int id, string fileType, string language = null)
         {
@@ -164,6 +202,11 @@ namespace AnimeStreamerV2.Controllers
             }
         }
 
+
+        /// <summary>
+        /// Merges uploaded file chunks into a complete file.
+        /// </summary>
+        /// <param name="request">The merge request containing file details.</param>
         [HttpPost]
         public async Task<IActionResult> MergeFileChunks([FromBody] MergeRequest request)
         {
@@ -220,6 +263,10 @@ namespace AnimeStreamerV2.Controllers
             return Json(new { success = true, message = $"{fileType.ToUpperInvariant()} úspěšně nahráno a spojeno" });
         }
 
+        /// <summary>
+        /// Displays the confirmation page for deleting an episode.
+        /// </summary>
+        /// <param name="id">The ID of the episode to delete.</param>
         public async Task<IActionResult> Delete(int id)
         {
             var episode = await _context.Episodes.FindAsync(id);
@@ -231,6 +278,10 @@ namespace AnimeStreamerV2.Controllers
             return View(episode);
         }
 
+        /// <summary>
+        /// Processes the deletion of an episode.
+        /// </summary>
+        /// <param name="id">The ID of the episode to delete.</param>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -245,19 +296,48 @@ namespace AnimeStreamerV2.Controllers
             return RedirectToAction("Details", "Anime", new { id = episode.AnimeId });
         }
 
+        /// <summary>
+        /// Checks if an episode with the specified ID exists.
+        /// </summary>
+        /// <param name="id">The ID of the episode to check.</param>
+        /// <returns>True if the episode exists, otherwise false.</returns>
         private bool EpisodeExists(int id)
         {
             return _context.Episodes.Any(e => e.Id == id);
         }
     }
+    /// <summary>
+    /// Represents a request to merge file chunks.
+    /// </summary>
     public class MergeRequest
     {
+        /// <summary>
+        /// Gets or sets the name of the file.
+        /// </summary>
         public string FileName { get; set; }
+        /// <summary>
+        /// Gets or sets the ID of the episode.
+        /// </summary>
         public int EpisodeId { get; set; }
+        /// <summary>
+        /// Gets or sets the total number of chunks.
+        /// </summary>
         public int TotalChunks { get; set; }
+        /// <summary>
+        /// Gets or sets the type of file (video or subtitle).
+        /// </summary>
         public string FileType { get; set; } // "video" nebo "subtitle"
+        /// <summary>
+        /// Gets or sets the language of the subtitle.
+        /// </summary>
         public string Language { get; set; } // Pro titulky
+        /// <summary>
+        /// Gets or sets the ID of the subtitle.
+        /// </summary>
         public string SubId { get; set; }
+        /// <summary>
+        /// Gets or sets the version of the subtitle.
+        /// </summary>
         public string Version { get; set; }
     }
 }

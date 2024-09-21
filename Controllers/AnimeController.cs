@@ -11,12 +11,21 @@ using test.Models.AdminSystem;
 
 namespace AnimeStreamerV2.Controllers
 {
+    /// <summary>
+    /// Controller for managing anime-related operations.
+    /// </summary>
     public class AnimeController : Controller
     {
         private readonly AnimeDbContext _context;
         private readonly IWebHostEnvironment _environment;
         private readonly UserManager<ApplicationUser> _userManager;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AnimeController"/> class.
+        /// </summary>
+        /// <param name="context">The database context.</param>
+        /// <param name="environment">The web host environment.</param>
+        /// <param name="userManager">The user manager.</param>
         public AnimeController(AnimeDbContext context, IWebHostEnvironment environment, UserManager<ApplicationUser> userManager)
         {
             _context = context;
@@ -24,6 +33,10 @@ namespace AnimeStreamerV2.Controllers
             _userManager = userManager;
         }
 
+        /// <summary>
+        /// Displays the index page with a list of animes.
+        /// </summary>
+        /// <returns>The index view with a list of animes.</returns>
         public async Task<IActionResult> Index()
         {
             var countries = Enum.GetValues(typeof(CountryEnum))
@@ -64,7 +77,7 @@ namespace AnimeStreamerV2.Controllers
             .Where(wp => wp.UserId == userId && wp.EpisodeId == episode.Id)
             .Select(wp => wp.Timestamp.TotalSeconds)
             .FirstOrDefaultAsync();
-                            episode.WatchProgres = progress;
+                            episode.WatchProgress = progress;
                         }
                     }
 
@@ -75,6 +88,11 @@ namespace AnimeStreamerV2.Controllers
             return View(animes);
         }
 
+        /// <summary>
+        /// Displays details of a specific anime.
+        /// </summary>
+        /// <param name="id">The ID of the anime.</param>
+        /// <returns>The details view for the specified anime.</returns>
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -94,11 +112,10 @@ namespace AnimeStreamerV2.Controllers
                 {
                     foreach (var episode in anime.Episodes)
                     {
-                        var progress = await _context.WatchProgresses
+                        episode.WatchProgress = await _context.WatchProgresses
         .Where(wp => wp.UserId == userId && wp.EpisodeId == episode.Id)
         .Select(wp => wp.Timestamp.TotalSeconds)
         .FirstOrDefaultAsync();
-                        episode.WatchProgres = progress;
                     }
 
                 }
@@ -110,11 +127,24 @@ namespace AnimeStreamerV2.Controllers
             ViewData["baseUrl"]= $"{Request.Scheme}://{Request.Host}/"/*+{ Request.Host.Port ?? 80}*/;
             return View(anime);
         }
+
+        /// <summary>
+        /// Displays the create anime form.
+        /// </summary>
+        /// <returns>The create view.</returns>
         [Authorize(Roles = "Admin,ContentCreator")]
         public IActionResult Create()
         {
             return View();
         }
+
+
+        /// <summary>
+        /// Processes the creation of a new anime.
+        /// </summary>
+        /// <param name="anime">The anime model to create.</param>
+        /// <param name="AnimeIcon">The icon file for the anime.</param>
+        /// <returns>Redirects to the Details action if successful, otherwise returns to the Create view.</returns>
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -139,6 +169,11 @@ namespace AnimeStreamerV2.Controllers
             return View(anime);
         }
 
+        /// <summary>
+        /// Adds an icon to the specified anime.
+        /// </summary>
+        /// <param name="anime">The anime model.</param>
+        /// <param name="AnimeIcon">The icon file to add.</param>
         private async Task AddIcon(AnimeModel anime, IFormFile AnimeIcon)
         {
             var tempDirectory = Path.Combine(_environment.WebRootPath, "anime", $"{anime.Id}");
@@ -152,6 +187,11 @@ namespace AnimeStreamerV2.Controllers
             anime.IconPath = Path.Combine("anime", $"{anime.Id}", AnimeIcon.FileName);
         }
 
+        /// <summary>
+        /// Displays the edit form for a specific anime.
+        /// </summary>
+        /// <param name="id">The ID of the anime to edit.</param>
+        /// <returns>The edit view for the specified anime.</returns>
         [Authorize(Roles = "Admin,ContentCreator")]
         public async Task<IActionResult> Edit(int id)
         {
@@ -175,6 +215,14 @@ namespace AnimeStreamerV2.Controllers
             return View(viewModel);
         }
 
+        /// <summary>
+        /// Processes the editing of an existing anime.
+        /// </summary>
+        /// <param name="id">The ID of the anime to edit.</param>
+        /// <param name="viewModel">The view model containing the updated anime data.</param>
+        /// <param name="AnimeIcon">The updated icon file for the anime.</param>
+        /// <param name="SelectedCategoryIds">The list of selected category IDs.</param>
+        /// <returns>Redirects to the Index action if successful, otherwise returns to the Edit view.</returns>
         [HttpPost]
         [Authorize(Roles = "Admin,ContentCreator")]
         public async Task<IActionResult> Edit(int id, AnimeEditViewModel viewModel, IFormFile? AnimeIcon, List<int> SelectedCategoryIds)
@@ -238,6 +286,12 @@ namespace AnimeStreamerV2.Controllers
             viewModel.AllCategories = await _context.Categories.ToListAsync();
             return View(viewModel);
         }
+
+        /// <summary>
+        /// Displays the delete confirmation page for a specific anime.
+        /// </summary>
+        /// <param name="id">The ID of the anime to delete.</param>
+        /// <returns>The delete confirmation view for the specified anime.</returns>
         [Authorize(Roles = "Admin,ContentCreator")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -249,7 +303,13 @@ namespace AnimeStreamerV2.Controllers
 
             return View(anime);
         }
-        [Authorize]
+
+        /// <summary>
+        /// Processes the deletion of an anime.
+        /// </summary>
+        /// <param name="id">The ID of the anime to delete.</param>
+        /// <param name="remove">A boolean indicating whether to remove the anime.</param>
+        /// <returns>Redirects to the Index action after deletion.</returns>
         [Authorize(Roles = "Admin,ContentCreator")]
         [HttpPost]
         //[ValidateAntiForgeryToken]
@@ -265,6 +325,11 @@ namespace AnimeStreamerV2.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        /// <summary>
+        /// Checks if an anime with the specified ID exists.
+        /// </summary>
+        /// <param name="id">The ID of the anime to check.</param>
+        /// <returns>True if the anime exists, otherwise false.</returns>
         private bool AnimeExists(int id)
         {
             return _context.Animes.Any(e => e.Id == id);

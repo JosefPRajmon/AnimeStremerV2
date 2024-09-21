@@ -184,7 +184,7 @@
         break;
     default:
         {
-            var animes = Model.Where(anime => anime.Episodes.Any(c => c.WatchProgres > 0)).ToList();
+            var animes = Model.Where(anime => anime.Episodes.Any(c => c.WatchProgress > 0)).ToList();
             if (animes.Any())
             {
                 @await Component.InvokeAsync("AnimeRow", new
