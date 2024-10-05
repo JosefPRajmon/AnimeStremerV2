@@ -21,7 +21,7 @@ namespace test.Models.AdminSystem
         /// </summary>
         #endregion
         #region Creators
-        public string Country { get; set; }
+        public string? Country { get; set; }
         /// <summary>
         /// Gets or sets a value indicating whether the user is a subtitle creator.
         /// </summary>

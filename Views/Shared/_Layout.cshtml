@@ -48,6 +48,7 @@
 
                     <partial name="_LoginPartial" />
                 </div>
+                <input type="search" placeholder="Search" style="border-radius:20px;text-align:center;" oninput="Search(this.value)" />
             </div>
         </nav>
     </header>
@@ -86,6 +87,36 @@
                 });
             }
         });
+        function Search(input) {
+            var allAnime = document.querySelectorAll(".anime-item");
+            var allAnimeControler = document.querySelectorAll(".anime-component");
+            //allAnime
+            allAnimeControler.forEach(
+                function (value) {
+                    const allAnimes = value.children[1].children;
+                    console.log(allAnime)
+                    var visibleItem = 0;
+                    var abc = value.getAttribute("filtr")
+                    if (value.getAttribute("filtr")=="false") {
+                        for (let i = 0; i < allAnimes.length; i++) {
+                            const anime = allAnimes[i];
+                            if (anime.getAttribute("name").toUpperCase().includes(input.toUpperCase())) {
+                                anime.style.display = "block";
+                                visibleItem++;
+                            } else {
+                                anime.style.display = "none";
+                            }
+                        }
+                    }
+                    if (visibleItem == 0) {
+                        value.style.display = "none";
+                    }
+                    else{
+                        value.style.display ="block"
+                    }
+                }
+            )
+        }
         </script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>

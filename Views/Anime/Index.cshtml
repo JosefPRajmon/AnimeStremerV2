@@ -54,12 +54,15 @@
                     component.classList.remove('vertical-layout');
                     if (component.id == selectId) {
                         chcangeOrient(component.id, "block")
+                        component.setAttribute("filtr", "false")
                     }
                     else if (selectId == "") {
                         component.style.display = "block";
+                        component.setAttribute("filtr","false")
                     }
                     else {
                         component.style.display = "none";
+                        component.setAttribute("filtr", "true")
                     }
 
                 });
@@ -94,12 +97,15 @@
                 component.classList.remove('vertical-layout');
                 if (component.id == selectId) {
                     chcangeOrient(component.id, "block")
+                    component.setAttribute("filtr", "false")
                 }
                 else if (selectId == "") {
                     component.style.display = "block";
+                    component.setAttribute("filtr", "false")
                 }
                 else {
                     component.style.display = "none";
+                    component.setAttribute("filtr", "true")
                 }
                 
             });
@@ -144,13 +150,16 @@
                 animeComponents.forEach(component => {
                 component.classList.remove('vertical-layout');
                 if (categoryArray.length == 0) {
-                        component.style.display = "block";
+                    component.style.display = "block";
+                    component.setAttribute("filtr", "false")
                     }
                     else if (categoryArray.includes(component.id)) {
                     chcangeOrient(component.id, "block")
+                    component.setAttribute("filtr", "false")
                     }
                     else {
-                        component.style.display = "none";
+                    component.style.display = "none";
+                    component.setAttribute("filtr", "true")
                     }
                 })
             }

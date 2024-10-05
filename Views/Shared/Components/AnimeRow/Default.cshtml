@@ -1,12 +1,12 @@
 ﻿@model IEnumerable<AnimeStreamerV2.Models.AnimeModel>
-<div class="anime-component" id="@ViewData["RowName"]">
+<div class="anime-component" id="@ViewData["RowName"]" filtr="false">
     <h2>@ViewData["RowName"]</h2>
     <div class="anime-scroll-container">
         @foreach (var item in Model)
         {
             if (item.IconPath!=null)
             {
-                <div class="anime-item">
+                <div class="anime-item" name="@item.Name">
                     <a href="@Url.Action("Details", "Anime", new { id = item.Id })">
                         <img src="@ViewData["BaseUrl"]@item.IconPath" alt="Anime Icon" class="rounded-image" />
                     </a>
