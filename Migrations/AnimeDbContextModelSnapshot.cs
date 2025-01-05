@@ -34,7 +34,7 @@ namespace test.Migrations
 
                     b.HasIndex("CategoriesId");
 
-                    b.ToTable("AnimeModelCategory");
+                    b.ToTable("AnimeModelCategory", (string)null);
                 });
 
             modelBuilder.Entity("AnimePlayerV2.Models.Category", b =>
@@ -54,7 +54,7 @@ namespace test.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("AnimePlayerV2.Models.WatchProgress", b =>
@@ -84,7 +84,7 @@ namespace test.Migrations
 
                     b.HasIndex("UserId1");
 
-                    b.ToTable("WatchProgresses");
+                    b.ToTable("WatchProgresses", (string)null);
                 });
 
             modelBuilder.Entity("AnimeStreamerV2.Models.AnimeEpisodeModel", b =>
@@ -139,7 +139,7 @@ namespace test.Migrations
 
                     b.HasIndex("AnimeModelId");
 
-                    b.ToTable("Episodes");
+                    b.ToTable("Episodes", (string)null);
                 });
 
             modelBuilder.Entity("AnimeStreamerV2.Models.AnimeModel", b =>
@@ -172,7 +172,7 @@ namespace test.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Animes");
+                    b.ToTable("Animes", (string)null);
                 });
 
             modelBuilder.Entity("AnimeStreamerV2.Models.SubtitleModel", b =>
@@ -206,7 +206,7 @@ namespace test.Migrations
 
                     b.HasIndex("AnimeEpisodeModelId");
 
-                    b.ToTable("Subtitles");
+                    b.ToTable("Subtitles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -444,7 +444,7 @@ namespace test.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Subscriptions");
+                    b.ToTable("Subscriptions", (string)null);
                 });
 
             modelBuilder.Entity("test.Models.AdminSystem.User", b =>
@@ -484,7 +484,7 @@ namespace test.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("User");
+                    b.ToTable("User", (string)null);
                 });
 
             modelBuilder.Entity("AnimeModelCategory", b =>

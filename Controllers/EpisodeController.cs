@@ -54,7 +54,7 @@ namespace AnimeStreamerV2.Controllers
             List<AnimeEpisodeModel> allepisode = _context.Episodes.Where(a => a.AnimeId == id).ToList();
             int predictEpisode;
             int predictSeason;
-            if (allepisode.Count<0)
+            if (allepisode.Count>0)
             {
                 predictEpisode = allepisode.MaxBy(a => a.EpisodeNumber).EpisodeNumber;
                 predictSeason = allepisode.MaxBy(a => a.Season).Season;

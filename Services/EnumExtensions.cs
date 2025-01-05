@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using AnimePlayerV2.Models.AdminSystem.Languages;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
 namespace AnimePlayerV2.Services
@@ -23,6 +25,17 @@ namespace AnimePlayerV2.Services
                 .First()
                 .GetCustomAttribute<DisplayAttribute>()
                 ?.GetName() ?? enumValue.ToString();
+        }
+
+        public static List<SelectListItem> GetCountryesEnum()
+        {
+            return Enum.GetValues(typeof(CountryEnum))
+                   .Cast<CountryEnum>()
+                   .Select(c => new SelectListItem
+                   {
+                       Value = c.ToString(),
+                       Text = c.ToString()
+                   }).ToList();
         }
     }
 }

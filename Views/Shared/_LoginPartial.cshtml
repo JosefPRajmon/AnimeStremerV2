@@ -3,12 +3,23 @@
 
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
-
+@{
+   // var currentUser = await UserManager.GetUserAsync(User); // Získáme aktuálního uživatele
+}
 <ul class="navbar-nav ml-auto">
     @if (SignInManager.IsSignedIn(User))
     {
-        @if (User.IsInRole("Admin")||User.IsInRole("ContentCreator")||User.IsInRole("SubtitleCreator"))
+
+/*@foreach (var role in await UserManager.GetRolesAsync(currentUser))
+{
+    <span>@role</span>
+}*/
+
+
+
+        @if (User.IsInRole("Admin") || User.IsInRole("ContentCreator") || User.IsInRole("SubtitleCreator"))
         {
+
             <li class="nav-item dropdown creator-dropdown">
                 <a class="nav-link" href="#" id="creatorDropdown">Creator</a>
                 <div class="dropdown-menu creator-menu">
