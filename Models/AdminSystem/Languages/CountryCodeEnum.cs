@@ -6,6 +6,6 @@
         cs,
         ko,
         zh,
-            enVb
+        enVb
     }
 }
