@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using test.Models.AdminSystem;
 
@@ -11,33 +10,33 @@ namespace test.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public UserAdminController(UserManager<ApplicationUser> userManager)
+        public UserAdminController( UserManager<ApplicationUser> userManager )
         {
             _userManager = userManager;
         }
 
-        public async Task<IActionResult> AssignRole(string userId, string roleName)
+        public async Task<IActionResult> AssignRole( string userId, string roleName )
         {
             var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
+            if( user == null )
             {
                 return NotFound();
             }
 
             var result = await _userManager.AddToRoleAsync(user, roleName);
-            if (result.Succeeded)
+            if( result.Succeeded )
             {
-                return RedirectToAction("Index", "Home"); // nebo kam chcete přesměrovat po úspěchu
+                return RedirectToAction( "Index", "Home" ); // nebo kam chcete přesměrovat po úspěchu
             }
 
-            foreach (var error in result.Errors)
+            foreach( var error in result.Errors )
             {
-                ModelState.AddModelError("", error.Description);
+                ModelState.AddModelError( "", error.Description );
             }
 
-            return View("Error");
+            return View( "Error" );
         }
-
+        /*
         [Authorize]
         public async Task<IActionResult> MakeAdmin()
         {
@@ -54,7 +53,7 @@ namespace test.Controllers
             }
 
             return Content("Něco se pokazilo.");
-        }
+        }*/
     }
 
 
