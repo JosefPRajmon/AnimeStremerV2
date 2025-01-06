@@ -14,19 +14,19 @@ namespace test.Areas.Identity.Pages.Account
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<LogoutModel> _logger;
 
-        public LogoutModel(SignInManager<ApplicationUser> signInManager, ILogger<LogoutModel> logger)
+        public LogoutModel( SignInManager<ApplicationUser> signInManager, ILogger<LogoutModel> logger )
         {
             _signInManager = signInManager;
             _logger = logger;
         }
 
-        public async Task<IActionResult> OnPost(string returnUrl = null)
+        public async Task<IActionResult> OnPost( string returnUrl = null )
         {
             await _signInManager.SignOutAsync();
-            _logger.LogInformation("User logged out.");
-            if (returnUrl != null)
+            _logger.LogInformation( "User logged out." );
+            if( returnUrl != null )
             {
-                return LocalRedirect(returnUrl);
+                return LocalRedirect( returnUrl );
             }
             else
             {

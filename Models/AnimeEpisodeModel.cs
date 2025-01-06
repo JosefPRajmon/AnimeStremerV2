@@ -24,7 +24,7 @@ namespace AnimeStreamerV2.Models
         /// <summary>
         /// Gets or sets the name of the episode.
         /// </summary>
-        [Required(ErrorMessage = "The Name field is required.")]
+        [Required( ErrorMessage = "The Name field is required." )]
         public string Name { get; set; }
 
         /// <summary>
@@ -52,13 +52,13 @@ namespace AnimeStreamerV2.Models
         /// <summary>
         /// Gets or sets the season number of the episode.
         /// </summary>
-        [Required(ErrorMessage = "The Season field is required.")]
+        [Required( ErrorMessage = "The Season field is required." )]
         public int Season { get; set; }
 
         /// <summary>
         /// Gets or sets the episode number within its season.
         /// </summary>
-        [Required(ErrorMessage = "The Episode Number field is required.")]
+        [Required( ErrorMessage = "The Episode Number field is required." )]
         public int EpisodeNumber { get; set; }
         #endregion
 

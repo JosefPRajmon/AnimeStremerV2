@@ -8,42 +8,42 @@ namespace test.Migrations
     public partial class AddCountry : Migration
     {
         /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
+        protected override void Up( MigrationBuilder migrationBuilder )
         {
             migrationBuilder.AddColumn<string>(
                 name: "EpisodaIcon",
                 table: "Episodes",
                 type: "nvarchar(max)",
-                nullable: true);
+                nullable: true );
 
             migrationBuilder.AddColumn<string>(
                 name: "Country",
                 table: "AspNetUsers",
                 type: "nvarchar(max)",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: "" );
 
             migrationBuilder.AddColumn<string>(
                 name: "CountryOfOrigin",
                 table: "Animes",
                 type: "nvarchar(max)",
-                nullable: true);
+                nullable: true );
         }
 
         /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
+        protected override void Down( MigrationBuilder migrationBuilder )
         {
             migrationBuilder.DropColumn(
                 name: "EpisodaIcon",
-                table: "Episodes");
+                table: "Episodes" );
 
             migrationBuilder.DropColumn(
                 name: "Country",
-                table: "AspNetUsers");
+                table: "AspNetUsers" );
 
             migrationBuilder.DropColumn(
                 name: "CountryOfOrigin",
-                table: "Animes");
+                table: "Animes" );
         }
     }
 }

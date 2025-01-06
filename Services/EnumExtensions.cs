@@ -18,10 +18,10 @@ namespace AnimePlayerV2.Services
     /// otherwise, returns the string representation of the enum value.
     /// </returns>
     {
-        public static string GetDisplayName(this Enum enumValue)
+        public static string GetDisplayName( this Enum enumValue )
         {
             return enumValue.GetType()
-                .GetMember(enumValue.ToString())
+                .GetMember( enumValue.ToString() )
                 .First()
                 .GetCustomAttribute<DisplayAttribute>()
                 ?.GetName() ?? enumValue.ToString();
@@ -29,13 +29,13 @@ namespace AnimePlayerV2.Services
 
         public static List<SelectListItem> GetCountryesEnum()
         {
-            return Enum.GetValues(typeof(CountryEnum))
+            return Enum.GetValues( typeof( CountryEnum ) )
                    .Cast<CountryEnum>()
-                   .Select(c => new SelectListItem
+                   .Select( c => new SelectListItem
                    {
                        Value = c.ToString(),
                        Text = c.ToString()
-                   }).ToList();
+                   } ).ToList();
         }
     }
 }

@@ -8,21 +8,21 @@ namespace test.Migrations
     public partial class AddWathProgressV2 : Migration
     {
         /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
+        protected override void Up( MigrationBuilder migrationBuilder )
         {
             migrationBuilder.RenameColumn(
                 name: "EpisodeId",
                 table: "WatchProgresses",
-                newName: "EpisodeNumberId");
+                newName: "EpisodeNumberId" );
         }
 
         /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
+        protected override void Down( MigrationBuilder migrationBuilder )
         {
             migrationBuilder.RenameColumn(
                 name: "EpisodeNumberId",
                 table: "WatchProgresses",
-                newName: "EpisodeId");
+                newName: "EpisodeId" );
         }
     }
 }
