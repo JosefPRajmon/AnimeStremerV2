@@ -82,12 +82,15 @@
     </select>
         @foreach (var item in Model.Select(anime => anime.CountryOfOrigin).Distinct())
         {
-            @await Component.InvokeAsync("AnimeRow", new
-                {
-                    AnimeList = Model.Where(anime => anime.CountryOfOrigin== item.ToString()).ToList(),
-                    RowName = item.ToString(),
-                    BaseUrl = ViewData["baseUrl"]
-                })
+      if (item is not null)
+            {
+                @await Component.InvokeAsync("AnimeRow", new
+                    {
+                        AnimeList = Model.Where(anime => anime.CountryOfOrigin == item.ToString()).ToList(),
+                        RowName = item.ToString(),
+                        BaseUrl = ViewData["baseUrl"]
+                    })
+            }
         }
         @section scripts {
             <script>

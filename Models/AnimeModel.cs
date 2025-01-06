@@ -1,6 +1,5 @@
 ﻿using AnimePlayerV2.Models;
 using System.ComponentModel.DataAnnotations;
-using System.Reflection;
 using test.Models;
 
 namespace AnimeStreamerV2.Models

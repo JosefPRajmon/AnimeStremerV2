@@ -8,7 +8,7 @@
     var user = await UserManager.GetUserAsync(User);
     ViewData["Title"] = "Anime Details";
     IEnumerable<AnimeEpisodeModel> trayler = Model.Episodes.Where(a => a.Trailer == true);
-        }
+}
 
 @section LinkCss {
     @await Html.PartialAsync("Components/VideoPlayer/LinkCss")
@@ -20,7 +20,7 @@
             @await Component.InvokeAsync("VideoPlayer")
         </div>
         <div id="trailerPlayer" class="video-player overlay-player">
-           @if (trayler.Count()>0)
+            @if (trayler.Count()>0)
             {
                 <video autoplay src="@(ViewData["baseUrl"])video?id=@(trayler.First().Id)" id="trailerVideo" />
             }
@@ -59,6 +59,10 @@
 
     <div class="episodes-section">
         <h2>Episodes</h2>
+        @if (User.IsInRole("Admin") || User.IsInRole("ContentCreator"))
+        {
+            <a href="@(ViewData["baseUrl"])Episode/Create/@(Model.Id)">Add Episode</a>
+        }
         @if (Model.Episodes.Count>0)
         {
             @for (int i = 1; i <= Model.Episodes.MaxBy(episode => episode.Season).Season; i++)
