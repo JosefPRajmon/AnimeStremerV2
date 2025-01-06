@@ -12,14 +12,14 @@ namespace test.Services
         /// </summary>
         /// <param name="roleManager">The role manager used to create and check roles.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
-        public static async Task InitializeAsync(RoleManager<IdentityRole> roleManager)
+        public static async Task InitializeAsync( RoleManager<IdentityRole> roleManager )
         {
             string[] roleNames = { "Admin", "SubtitleCreator", "ContentCreator", "User" };
-            foreach (var roleName in roleNames)
+            foreach( var roleName in roleNames )
             {
-                if (!await roleManager.RoleExistsAsync(roleName))
+                if( !await roleManager.RoleExistsAsync( roleName ) )
                 {
-                    await roleManager.CreateAsync(new IdentityRole(roleName));
+                    await roleManager.CreateAsync( new IdentityRole( roleName ) );
                 }
             }
         }

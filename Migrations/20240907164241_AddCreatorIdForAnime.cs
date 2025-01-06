@@ -8,21 +8,21 @@ namespace test.Migrations
     public partial class AddCreatorIdForAnime : Migration
     {
         /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
+        protected override void Up( MigrationBuilder migrationBuilder )
         {
             migrationBuilder.AddColumn<string>(
                 name: "CreaterId",
                 table: "Animes",
                 type: "nvarchar(max)",
-                nullable: true);
+                nullable: true );
         }
 
         /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
+        protected override void Down( MigrationBuilder migrationBuilder )
         {
             migrationBuilder.DropColumn(
                 name: "CreaterId",
-                table: "Animes");
+                table: "Animes" );
         }
     }
 }

@@ -9,18 +9,18 @@ namespace test.Models
     {
         public static IEnumerable<SelectListItem> GetEnumSelectList<TEnum>() where TEnum : Enum
         {
-            return Enum.GetValues(typeof(TEnum))
+            return Enum.GetValues( typeof( TEnum ) )
                 .Cast<TEnum>()
-                .Select(e => new SelectListItem
+                .Select( e => new SelectListItem
                 {
                     Value = e.ToString(),
                     Text = e.GetDisplayName() // Použití vaší existující metody GetDisplayName
-                });
+                } );
         }
-        public static string GetEnumDisplayName(Enum enumValue)
+        public static string GetEnumDisplayName( Enum enumValue )
         {
             return enumValue.GetType()
-                .GetMember(enumValue.ToString())
+                .GetMember( enumValue.ToString() )
                 .First()
                 .GetCustomAttribute<DisplayAttribute>()
                 ?.GetName() ?? enumValue.ToString();

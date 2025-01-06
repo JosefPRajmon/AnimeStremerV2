@@ -39,7 +39,7 @@ namespace AnimeStreamerV2.DbContextFile
         /// Initializes a new instance of the <see cref="AnimeDbContext"/> class.
         /// </summary>
         /// <param name="options">The options to be used by the DbContext.</param>
-        public AnimeDbContext(DbContextOptions<AnimeDbContext> options) : base(options)
+        public AnimeDbContext( DbContextOptions<AnimeDbContext> options ) : base( options )
         {
         }
 
@@ -47,14 +47,14 @@ namespace AnimeStreamerV2.DbContextFile
         /// Configures the model that was discovered by convention from the entity types exposed in <see cref="DbSet{TEntity}"/> properties on your derived context.
         /// </summary>
         /// <param name="modelBuilder">The builder being used to construct the model for this context.</param>
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating( ModelBuilder modelBuilder )
         {
-            base.OnModelCreating(modelBuilder);
+            base.OnModelCreating( modelBuilder );
 
             modelBuilder.Entity<AnimeEpisodeModel>()
-                .HasMany(e => e.Subtitles)
-                .WithOne(s => s.AnimeEpisode)
-                .HasForeignKey(s => s.AnimeEpisodeModelId);
+                .HasMany( e => e.Subtitles )
+                .WithOne( s => s.AnimeEpisode )
+                .HasForeignKey( s => s.AnimeEpisodeModelId );
         }
     }
 }

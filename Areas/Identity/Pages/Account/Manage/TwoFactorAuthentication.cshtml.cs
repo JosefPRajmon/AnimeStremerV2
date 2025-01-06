@@ -16,7 +16,7 @@ namespace test.Areas.Identity.Pages.Account.Manage
         private readonly ILogger<TwoFactorAuthenticationModel> _logger;
 
         public TwoFactorAuthenticationModel(
-            UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ILogger<TwoFactorAuthenticationModel> logger)
+            UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ILogger<TwoFactorAuthenticationModel> logger )
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -58,15 +58,15 @@ namespace test.Areas.Identity.Pages.Account.Manage
         public async Task<IActionResult> OnGetAsync()
         {
             var user = await _userManager.GetUserAsync(User);
-            if (user == null)
+            if( user == null )
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return NotFound( $"Unable to load user with ID '{_userManager.GetUserId( User )}'." );
             }
 
-            HasAuthenticator = await _userManager.GetAuthenticatorKeyAsync(user) != null;
-            Is2faEnabled = await _userManager.GetTwoFactorEnabledAsync(user);
-            IsMachineRemembered = await _signInManager.IsTwoFactorClientRememberedAsync(user);
-            RecoveryCodesLeft = await _userManager.CountRecoveryCodesAsync(user);
+            HasAuthenticator = await _userManager.GetAuthenticatorKeyAsync( user ) != null;
+            Is2faEnabled = await _userManager.GetTwoFactorEnabledAsync( user );
+            IsMachineRemembered = await _signInManager.IsTwoFactorClientRememberedAsync( user );
+            RecoveryCodesLeft = await _userManager.CountRecoveryCodesAsync( user );
 
             return Page();
         }
@@ -74,9 +74,9 @@ namespace test.Areas.Identity.Pages.Account.Manage
         public async Task<IActionResult> OnPostAsync()
         {
             var user = await _userManager.GetUserAsync(User);
-            if (user == null)
+            if( user == null )
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return NotFound( $"Unable to load user with ID '{_userManager.GetUserId( User )}'." );
             }
 
             await _signInManager.ForgetTwoFactorClientAsync();

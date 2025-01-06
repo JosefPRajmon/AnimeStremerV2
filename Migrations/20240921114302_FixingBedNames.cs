@@ -8,31 +8,31 @@ namespace test.Migrations
     public partial class FixingBedNames : Migration
     {
         /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
+        protected override void Up( MigrationBuilder migrationBuilder )
         {
             migrationBuilder.RenameColumn(
                 name: "WatchProgres",
                 table: "Episodes",
-                newName: "WatchProgress");
+                newName: "WatchProgress" );
 
             migrationBuilder.RenameColumn(
                 name: "EpisodaIcon",
                 table: "Episodes",
-                newName: "EpisodeIcon");
+                newName: "EpisodeIcon" );
         }
 
         /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
+        protected override void Down( MigrationBuilder migrationBuilder )
         {
             migrationBuilder.RenameColumn(
                 name: "WatchProgress",
                 table: "Episodes",
-                newName: "WatchProgres");
+                newName: "WatchProgres" );
 
             migrationBuilder.RenameColumn(
                 name: "EpisodeIcon",
                 table: "Episodes",
-                newName: "EpisodaIcon");
+                newName: "EpisodaIcon" );
         }
     }
 }

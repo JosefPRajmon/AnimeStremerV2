@@ -14,6 +14,6 @@ namespace AnimeStreamerV2.Models
         /// Gets a value indicating whether the RequestId should be displayed.
         /// Returns true if RequestId is not null or empty.
         /// </summary>
-        public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+        public bool ShowRequestId => !string.IsNullOrEmpty( RequestId );
     }
 }

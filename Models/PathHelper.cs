@@ -12,9 +12,9 @@
         /// <param name="episodeId">The ID of the episode.</param>
         /// <param name="fileExtension">The file extension of the video.</param>
         /// <returns>The generated file path for the anime video.</returns>
-        public static string GenerateVideoPath(int animeId, int episodeId, string fileExtension)
+        public static string GenerateVideoPath( int animeId, int episodeId, string fileExtension )
         {
-            return Path.Combine("AnimeVideos", animeId.ToString(), $"{episodeId}.{fileExtension}");
+            return Path.Combine( "AnimeVideos", animeId.ToString(), $"{episodeId}.{fileExtension}" );
         }
 
         /// <summary>
@@ -24,9 +24,9 @@
         /// <param name="episodeId">The ID of the episode.</param>
         /// <param name="language">The language of the subtitle.</param>
         /// <returns>The generated file path for the anime subtitle.</returns>
-        public static string GenerateSubtitlePath(int animeId, int episodeId, string language)
+        public static string GenerateSubtitlePath( int animeId, int episodeId, string language )
         {
-            return Path.Combine("AnimeVideos", animeId.ToString(), "subtitles", $"{episodeId}_{language}.srt");
+            return Path.Combine( "AnimeVideos", animeId.ToString(), "subtitles", $"{episodeId}_{language}.srt" );
         }
     }
 }

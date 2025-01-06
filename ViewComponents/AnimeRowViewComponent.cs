@@ -5,7 +5,7 @@ namespace AnimeStreamerV2.ViewComponents
 {
     public class AnimeRowViewComponent : ViewComponent
     {
-        public IViewComponentResult Invoke(IEnumerable<AnimeModel> AnimeList, String RowName, string BaseUrl)
+        public IViewComponentResult Invoke( IEnumerable<AnimeModel> AnimeList, String RowName, string BaseUrl )
         {
             ViewData["RowName"] = RowName;
             ViewData["BaseUrl"] = BaseUrl;
@@ -18,7 +18,7 @@ namespace AnimeStreamerV2.ViewComponents
                  }
              }
              AnimeList = a;*/
-            return View(AnimeList);
+            return View( AnimeList );
         }
     }
 }
