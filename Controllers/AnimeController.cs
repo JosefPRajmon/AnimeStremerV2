@@ -96,8 +96,13 @@ namespace AnimeStreamerV2.Controllers
         /// </summary>
         /// <returns>The create view.</returns>
         [Authorize( Roles = "Admin,ContentCreator" )]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var user = await _userManager.GetUserAsync(User);
+            if( user.Country is null )
+            {
+                return Redirect( "/Identity/Account/Manage/CreatorSettings" );
+            }
             return View();
         }
 
